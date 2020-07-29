@@ -1,7 +1,7 @@
 {
     "swagger": "2.0",
     "info": {
-        "version": "5.1.0",
+        "version": "1.0",
         "title": "api.video",
         "description": "api.video is an API able to encode on the go to facilitate immediate playback, enhancing viewer streaming experiences across multiple devices and platforms. Stream live or on-demand online videos within minutes with a well-documented API."
     },
