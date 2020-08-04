@@ -177,6 +177,10 @@
                                 "description": {
                                     "type": "string"
                                 },
+                                "source": {
+                                    "type": "string",
+									"description": "if adding a video already on the web, enter the url."
+                                },
                                 "public": {
                                     "type": "boolean",
 									"default": true, 
@@ -620,6 +624,13 @@
                     "in": "path",
                     "required": true,
                     "type": "string"
+                },
+                {
+                    "in": "formData",
+					"name": "file",
+                    "type": "file", 
+					"required": true,
+					"description":"The video you'd like to upload."
                 }
             ],
             "post": {
@@ -1536,6 +1547,13 @@
                         "name": "name",
                         "in": "query",
                         "type": "string"
+                    },
+                    {
+                        "name": "sortBy",
+                        "in": "query",
+                        "type": "string",
+						"description": "Allowed: createdAt, publishedAt, name"
+						
                     },
                     {
                         "$ref": "#/parameters/trait:pageQueryTrait:currentPage"
