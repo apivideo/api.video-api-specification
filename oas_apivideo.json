@@ -4012,70 +4012,97 @@
                     "format": "date-time"
                 },
                 "shapeMargin": {
-                    "type": "integer"
+                    "type": "integer",
+					"description": "Deprecated"
                 },
                 "shapeRadius": {
-                    "type": "integer"
+                    "type": "integer",
+					"description": "Deprecated"
                 },
                 "shapeAspect": {
-                    "type": "string"
+                    "type": "string",
+					"description": "Deprecated"
                 },
                 "shapeBackgroundTop": {
-                    "type": "string"
+                    "type": "string",
+					"description": "Deprecated"
                 },
                 "shapeBackgroundBottom": {
-                    "type": "string"
+                    "type": "string",
+					"description": "Deprecated"
                 },
                 "text": {
-                    "type": "string"
+                    "type": "string",
+					"description": "RGBA color for timer text. Default: rgba(255, 255, 255, 1)"
                 },
                 "link": {
-                    "type": "string"
+                    "type": "string",
+					"description": "RGBA color for all controls. Default: rgba(255, 255, 255, 1)"
                 },
                 "linkHover": {
-                    "type": "string"
+                    "type": "string",
+					"description": "RGBA color for all controls when hovered. Default: rgba(255, 255, 255, 1)"
                 },
                 "linkActive": {
-                    "type": "string"
+                    "type": "string",
+					"description": "Deprecated"
                 },
                 "trackPlayed": {
-                    "type": "string"
+                    "type": "string",
+					"description": "RGBA color playback bar: played content. Default: rgba(88, 131, 255, .95)"
                 },
                 "trackUnplayed": {
-                    "type": "string"
+                    "type": "string",
+					"description": "RGBA color playback bar: downloaded but unplayed (buffered) content. Default: rgba(255, 255, 255, .35)"
                 },
                 "trackBackground": {
-                    "type": "string"
+                    "type": "string",
+					"description": "RGBA color playback bar: background. Default: rgba(255, 255, 255, .2)"
                 },
                 "backgroundTop": {
-                    "type": "string"
+                    "type": "string",
+					"description": "RGBA color: top 50% of background. Default: rgba(0, 0, 0, .7)"
                 },
                 "backgroundBottom": {
-                    "type": "string"
+                    "type": "string",
+					"description": "RGBA color: bottom 50% of background. Default: rgba(0, 0, 0, .7)"
                 },
                 "backgroundText": {
-                    "type": "string"
+                    "type": "string",
+					"description": "RGBA color for title text. Default: rgba(255, 255, 255, 1)"
                 },
                 "enableApi": {
-                    "type": "boolean"
+                    "type": "boolean",
+					"description": "enable/disable player SDK access. Default: true"
                 },
                 "enableControls": {
-                    "type": "boolean"
+                    "type": "boolean",
+					"description": "enable/disable player controls. Default: true"
                 },
                 "forceAutoplay": {
-                    "type": "boolean"
+                    "type": "boolean",
+					"description": "enable/disable player autoplay. Default: false"
                 },
                 "hideTitle": {
-                    "type": "boolean"
+                    "type": "boolean",
+					"description": "enable/disable title. Default: false"
+                },
+                "forceLoop": {
+                    "type": "boolean",
+                    "default": false,
+					"description": "enable/disable looping. Default: false"
+             
                 },
                 "assets": {
                     "type": "object",
                     "properties": {
                         "logo": {
-                            "type": "string"
+                            "type": "string",
+					"description": "filename of image used for logo"
                         },
                         "link": {
-                            "type": "string"
+                            "type": "string",
+					"description": "url"
                         }
                     }
                 }
@@ -4086,54 +4113,78 @@
             "type": "object",
             "properties": {
                 "text": {
-                    "type": "string"
+                    "type": "string",
+					"description": "RGBA color for timer text. Default: rgba(255, 255, 255, 1)"
                 },
                 "link": {
-                    "type": "string"
+                    "type": "string",
+					"description": "RGBA color for all controls. Default: rgba(255, 255, 255, 1)"
                 },
                 "linkHover": {
-                    "type": "string"
+                    "type": "string",
+					"description": "RGBA color for all controls when hovered. Default: rgba(255, 255, 255, 1)"
+                
                 },
-                "linkActive": {
-                    "type": "string"
-                },
+                
                 "trackPlayed": {
-                    "type": "string"
+                    "type": "string",
+					"description": "RGBA color playback bar: played content. Default: rgba(88, 131, 255, .95)"
+                
                 },
                 "trackUnplayed": {
-                    "type": "string"
+                    "type": "string",
+					"description": "RGBA color playback bar: downloaded but unplayed (buffered) content. Default: rgba(255, 255, 255, .35)"
+               
                 },
                 "trackBackground": {
-                    "type": "string"
+                    "type": "string",
+					"description": "RGBA color playback bar: background. Default: rgba(255, 255, 255, .2)"
+             
                 },
                 "backgroundTop": {
-                    "type": "string"
+                    "type": "string",
+					"description": "RGBA color: top 50% of background. Default: rgba(0, 0, 0, .7)"
+               
                 },
                 "backgroundBottom": {
-                    "type": "string"
+                    "type": "string",
+					"description": "RGBA color: bottom 50% of background. Default: rgba(0, 0, 0, .7)"
+               
                 },
                 "backgroundText": {
-                    "type": "string"
+                    "type": "string",
+					"description": "RGBA color for title text. Default: rgba(255, 255, 255, 1)"
+             
                 },
                 "enableApi": {
                     "type": "boolean",
-                    "default": true
+                    "default": true,
+					"description": "enable/disable player SDK access. Default: true"
+               
                 },
                 "enableControls": {
                     "type": "boolean",
-                    "default": true
+                    "default": true,
+					"description": "enable/disable player controls. Default: true"
+                
                 },
                 "forceAutoplay": {
                     "type": "boolean",
-                    "default": false
+                    "default": false,
+					"description": "enable/disable player autoplay. Default: false"
+               
                 },
                 "hideTitle": {
                     "type": "boolean",
-                    "default": false
+                    "default": false,
+					"description": "enable/disable title. Default: false"
+             
                 },
                 "forceLoop": {
                     "type": "boolean",
-                    "default": false
+                    "default": false,
+					"description": "enable/disable looping. Default: false"
+             
                 }
             },
             "example": {
