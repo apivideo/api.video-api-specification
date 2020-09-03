@@ -192,7 +192,7 @@
                                 },
                                 "mp4Support": {
                                     "type": "boolean",
-									"default": false,
+									"default": true,
 									"description": "Enables mp4 version in addition to streamed version."
                                 },
                                 "playerId": {
@@ -233,7 +233,7 @@
                                 "description": "An amazing video explaining the string theory",
                                 "public": false,
                                 "panoramic": false,
-                                "mp4Support": false,
+                                "mp4Support": true,
                                 "playerId": "pl45KFKdlddgk654dspkze",
                                 "tags": [
                                     "maths",
@@ -479,7 +479,7 @@
                                         "description": "minim dolor esse reprehenderit",
                                         "public": false,
                                         "panoramic": false,
-                                        "mp4Support": false,
+                                        "mp4Support": true,
                                         "tags": [
                                             "veniam",
                                             "ut"
@@ -525,7 +525,7 @@
                                         "description": "dolore in in ",
                                         "public": false,
                                         "panoramic": false,
-                                        "mp4Support": false,
+                                        "mp4Support": true,
                                         "tags": [
                                             "reprehenderit enim in aliqua eu",
                                             "ea ad reprehenderit"
@@ -1094,7 +1094,7 @@
                                 "description": "An amazing video explaining the string theory",
                                 "public": false,
                                 "panoramic": false,
-                                "mp4Support": false,
+                                "mp4Support": true,
                                 "tags": [
                                     "maths",
                                     "string theory",
@@ -3972,7 +3972,7 @@
                         "mp4": {
                             "type": "string",
                             "format": "uri",
-                            "description": "Available only for paid plan and if mp4Support is enabled. Raw mp4 url."
+                            "description": "Available only if mp4Support is enabled. Raw mp4 url."
                         }
                     }
                 },
@@ -3990,7 +3990,7 @@
                 },
                 "mp4Support": {
                     "type": "boolean",
-                    "description": "Restricted for paid plan. Provides a mp4 fallback url\n"
+                    "description": "Provides a mp4 url.\n"
                 }
             }
         },
