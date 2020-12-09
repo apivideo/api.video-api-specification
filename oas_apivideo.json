@@ -1387,6 +1387,7 @@
           "Videos - Delegated upload"
         ],
         "summary": "List all upload tokens",
+		 "description": "Returns a list of all currently active delegated tokens",
         "operationId": "GET_upload-tokens",
         "parameters": [
           {
@@ -1519,11 +1520,13 @@
             "in": "body",
             "name": "body",
             "required": false,
-            "schema": {
+			 "schema": {
               "type": "object",
               "properties": {
                 "ttl": {
                   "type": "integer",
+	  			"description": "Time in seconds that the token will be active. A value of 0 means that the token has no exipration date. The default is to have no expiration.",
+           
                   "default": 0,
                   "minimum": 0,
                   "maximum": 2147483647
@@ -3935,11 +3938,12 @@
     }
   },
   "securityDefinitions": {
-    "bearerAuth": {
-      "type": "http",
-      "scheme": "bearer",
-      "bearerFormat": "JWT"
-    }
+      "oauth2": {
+          "type": "oauth2",
+          "flow": "implicit",
+          "scopes": {},
+          "authorizationUrl": ""
+      }
   },
   "definitions": {
     "video": {
@@ -4953,8 +4957,7 @@
         },
         "expiresAt": {
           "type": "string",
-          "format": "date-time",
-          "nullable": true
+          "format": "date-time"
         }
       },
       "title": "UploadToken"
