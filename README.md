@@ -1,3 +1,4 @@
+![](https://github.com/apivideo/API_OAS_file/blob/master/apivideo_banner.png)
 # API Video 
 
 API Video allows developers to create video communication solutions for their users. Easily add video recording and sharing to your application.
