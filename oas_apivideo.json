@@ -5,12 +5,11 @@
     "description" : "api.video is an API that encodes on the go to facilitate immediate playback, enhancing viewer streaming experiences across multiple devices and platforms. You can stream live or on-demand online videos within minutes.",
     "version" : "1"
   },
-  "servers" : [ {
-    "description" : "SwaggerHub API Auto Mocking",
-    "url" : "https://virtserver.swaggerhub.com/erikkai/api-video/1"
-  }, {
-    "url" : "https://ws.api.video"
-  } ],
+  "servers": [
+    {
+      "url": "https://ws.api.video"
+    }
+  ],
   "paths" : {
     "/auth/api-key" : {
       "post" : {
