@@ -1,11 +1,13 @@
 openapi: 3.0.0
 info:
+  title: api.video
   description: >-
     api.video is an API that encodes on the go to facilitate immediate playback,
     enhancing viewer streaming experiences across multiple devices and
     platforms. You can stream live or on-demand online videos within minutes.
   version: '1'
-  title: api.video
+servers:
+  - url: 'https://ws.api.video'
 paths:
   /auth/api-key:
     post:
@@ -19,21 +21,13 @@ paths:
         [tutorial](https://api.video/blog/tutorials/authentication-tutorial) on
         authentication.
       operationId: POST_auth-api-key
+      x-client-action: authenticate
+      x-client-hidden: true
       requestBody:
         content:
           application/json:
             schema:
-              type: object
-              required:
-                - apiKey
-              properties:
-                apiKey:
-                  type: string
-                  description: >-
-                    Your account API key. You can use your sandbox API key, or
-                    you can use your production API key.
-              example:
-                apiKey: 9VxMaPgsaFg7EBqmuspSzF7
+              $ref: '#/components/schemas/authenticate-payload'
       responses:
         '200':
           description: Success
@@ -76,26 +70,13 @@ paths:
         token that is valid for one hour (3600 seconds) and a new refresh
         token. 
       operationId: POST_auth-refresh
+      x-client-action: refresh
+      x-client-hidden: true
       requestBody:
         content:
           application/json:
             schema:
-              type: object
-              required:
-                - refreshToken
-              properties:
-                refreshToken:
-                  type: string
-                  description: >
-                    The refresh token is either the first refresh token you
-                    received when you authenticated with the auth/api-key
-                    endpoint, or it's the refresh token from the last time you
-                    used the auth/refresh endpoint. Place this in the body of
-                    your request to obtain a new access token (which is valid
-                    for an hour) and a new refresh token.
-              example:
-                refreshToken: >-
-                  def502005346d9cc2bd79a7793ab5bdabfefcaabfbb8c253f14733f1262077e1a3f38c4751d6d20f590c3784e531a82adc11f05fc1949aa46d5575aaa99cb84b9334ba66ac773576b5d7a418937ae337de62811d086dd42ad1164b12f87d67be6ffea18f2d50be9b95697b21c4d3c4372849bdb2287259cb80541570e913691a08b2fa33c85885930de15cebea627fc09f0255562ab3d39d87d4ff8fc02b00e252afcd480421dec7de9d1411176bcf669c527762e22294b453bc9ea06e9fa8ba5b873feb2ee14ce0a6a6ddd4b78c580631e210e9b9387265dc2bec9478a66a09dcdce1c40d2f856689e9d81742c9628a0b87b359e0b218ea1f07427eef89f999e47af89792f598e05847bd008fddc32ee63f4a601ffb4cd2ad08977f1c854ec358238322c918f05aa5a41f8a171dee497218408abc8283473f6112aeed7310815416a0fa36c63667e0ed014fa40b8992891bf58bae400d901c01450101c88f4978938ad138adc19cfe5698d60fd82cb27c586f6a8f70f4393c7c9e579df8739d46d249fb76d7
+              $ref: '#/components/schemas/refresh-token-payload'
       responses:
         '200':
           description: Success
@@ -128,8 +109,6 @@ paths:
                     name: ''
   /videos:
     get:
-      security:
-        - bearerAuth: []
       tags:
         - Videos
       summary: List all videos
@@ -139,6 +118,9 @@ paths:
         videos. You can filter what videos the API returns using the parameters
         described below.
       operationId: LIST-videos
+      x-client-action: list
+      x-group-parameters: true
+      x-client-paginated: true
       parameters:
         - name: title
           in: query
@@ -146,108 +128,95 @@ paths:
             The title of a specific video you want to find. The search will
             match exactly to what term you provide and return any videos that
             contain the same term as part of their titles.
-          example: My Video.mp4
           required: false
+          style: form
+          explode: true
           schema:
             type: string
+          example: My Video.mp4
         - name: tags
           in: query
           description: >-
             A tag is a category you create and apply to videos. You can search
             for videos with particular tags by listing one or more here. Only
             videos that have all the tags you list will be returned.
-          example: '"tags": ["captions", "dialogue"]'
           required: false
+          style: form
+          explode: true
           schema:
-            type: string
+            type: array
             items:
               type: string
+          example: '"tags": ["captions", "dialogue"]'
         - name: metadata
           in: query
           description: >-
             Videos can be tagged with metadata tags in key:value pairs. You can
             search for videos with specific key value pairs using this
             parameter.
-          example: >-
-            [{"key":"Author", "value":"John Doe"}, {"key":"Format",
-            "value":"Tutorial"}]
           required: false
+          style: form
           explode: true
           schema:
             type: array
             items:
               type: string
+          example: >-
+            [{"key":"Author", "value":"John Doe"}, {"key":"Format",
+            "value":"Tutorial"}]
         - name: description
           in: query
           description: >-
             If you described a video with a term or sentence, you can add it
             here to return videos containing this string.
-          example: New Zealand
           required: false
+          style: form
+          explode: true
           schema:
             type: string
+          example: New Zealand
         - name: liveStreamId
           in: query
           description: >-
             If you know the ID for a live stream, you can retrieve the stream by
             adding the ID for it here.
-          example: li400mYKSgQ6xs7taUeSaEKr
           required: false
+          style: form
+          explode: true
           schema:
             type: string
+          example: li400mYKSgQ6xs7taUeSaEKr
         - name: sortBy
           in: query
           description: >-
             Allowed: publishedAt, title. You can search by the time videos were
             published at, or by title.
-          example: publishedAt
           required: false
+          style: form
+          explode: true
           schema:
             type: string
+          example: publishedAt
         - name: sortOrder
           in: query
           description: >-
             Allowed: asc, desc. asc is ascending and sorts from A to Z. desc is
             descending and sorts from Z to A.
-          example: asc
           required: false
+          style: form
+          explode: true
           schema:
             type: string
-        - name: currentPage
-          in: query
-          description: >-
-            Choose the number of search results to return per page. Minimum
-            value: 1
-          example: 2
-          required: false
-          schema:
-            type: integer
-            default: 1
-        - name: pageSize
-          in: query
-          description: 'Results per page. Allowed values 1-100, default is 25.'
-          required: false
-          example: 30
-          schema:
-            type: integer
-            default: 25
+          example: asc
+        - $ref: '#/components/parameters/currentPage'
+        - $ref: '#/components/parameters/pageSize'
       responses:
         '200':
           description: Success
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
-                type: object
-                required:
-                  - data
-                  - pagination
-                properties:
-                  data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/video'
-                  pagination:
-                    $ref: '#/components/schemas/pagination'
+                $ref: '#/components/schemas/videos-list-response'
               examples:
                 response:
                   value:
@@ -363,7 +332,7 @@ paths:
         '400':
           description: Bad Request
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/bad-request'
               examples:
@@ -384,6 +353,8 @@ paths:
                         range:
                           min: 10
                           max: 100
+      security:
+        - bearerAuth: []
     post:
       tags:
         - Videos
@@ -391,158 +362,48 @@ paths:
       description: >
         To create a video, you create its metadata first, before adding the
         video file (exception - when using an existing HTTP source).
-
-
         Videos are public by default. Mp4 encoded versions are created at the
         highest quality (max 1080p) by default.
          ```shell
         $ curl https://ws.api.video/videos \
-
         -H 'Authorization: Bearer {access_token} \
-
         -d '{"title":"My video", 
              "description":"so many details",
              "mp4Support":true
         }'
-
         ```
-
-
         ### Creating a hosted video 
-
-
         You can also create a video directly from one hosted on a third-party
         server by giving its URI in `source` parameter:
-
-
         ```shell
-
         $ curl https://ws.api.video/videos \
-
         -H 'Authorization: Bearer {access_token} \
-
         -d '{"source":"http://uri/to/video.mp4", "title":"My video"}'
-
         ```
-
-
         In this case, the service will respond `202 Accepted` and download the
         video asynchronously.
-
          We have tutorials on:
         * [Creating and uploading
         videos](https://api.video/blog/tutorials/video-upload-tutorial)
-
         * [Uploading large
         videos](https://api.video/blog/tutorials/video-upload-tutorial-large-videos)
-
         * [Using tags with
         videos](https://api.video/blog/tutorials/video-tagging-best-practices)
-
         * [Private
         videos](https://api.video/blog/tutorials/tutorial-private-videos)
       operationId: POST-video
+      x-client-action: create
       requestBody:
+        description: video to create
         content:
           application/json:
             schema:
-              type: object
-              required:
-                - title
-              properties:
-                title:
-                  type: string
-                  description: The title of your new video.
-                  example: Maths video
-                description:
-                  type: string
-                  description: A brief description of your video.
-                  example: A video about string theory.
-                source:
-                  type: string
-                  description: >-
-                    If you add a video already on the web, this is where you
-                    enter the url for the video.
-                  example: 'https://www.myvideo.url.com/video.mp4'
-                public:
-                  type: boolean
-                  description: >-
-                    Whether your video can be viewed by everyone, or requires
-                    authentication to see it. A setting of false will require a
-                    unique token for each view.
-                  example: true
-                  default: true
-                panoramic:
-                  type: boolean
-                  description: Indicates if your video is a 360/immersive video.
-                  default: false
-                  example: false
-                mp4Support:
-                  type: boolean
-                  description: Enables mp4 version in addition to streamed version.
-                  example: true
-                  default: true
-                playerId:
-                  type: string
-                  description: The unique identification number for your video player.
-                  example: pl45KFKdlddgk654dspkze
-                tags:
-                  type: array
-                  description: A list of tags you want to use to describe your video.
-                  example: '["maths", "string theory", "video"]'
-                  items:
-                    type: string
-                metadata:
-                  type: array
-                  description: >-
-                    A list of key value pairs that you use to provide metadata
-                    for your video. These pairs can be made dynamic, allowing
-                    you to segment your audience. You can also just use the
-                    pairs as another way to tag and categorize your videos.
-                  example: '[{"key": "Author", "value": "John Doe"}]'
-                  items:
-                    type: object
-                    properties:
-                      key:
-                        type: string
-                        description: >-
-                          Part of a key value pair you can use to tag your
-                          videos.
-                        example: Dogs
-                      value:
-                        type: string
-                        description: >-
-                          Part of a key value pair you can use to tag your
-                          videos.
-                        example: Chihuahhua
-                publishedAt:
-                  type: string
-                  format: date-time
-                  description: >-
-                    The API uses ISO-8601 format for time, and includes 3 places
-                    for milliseconds.
-                  example: '2020-07-14T23:36:18.598Z'
-              example:
-                title: Maths video
-                description: An amazing video explaining string theory.
-                public: false
-                panoramic: false
-                mp4Support: true
-                playerId: pl45KFKdlddgk654dspkze
-                tags:
-                  - maths
-                  - string theory
-                  - video
-                metadata:
-                  - key: Author
-                    value: John Doe
-                  - key: Format
-                    value: Tutorial
+              $ref: '#/components/schemas/video-create-payload'
       responses:
         '201':
           description: Created
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/video'
               examples:
@@ -584,13 +445,13 @@ paths:
         '202':
           description: Accepted
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/video'
         '400':
           description: Bad Request
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/bad-request'
               examples:
@@ -625,56 +486,50 @@ paths:
         id you'd like to use, {access_token} with your token, and
         /path/to/video.mp4 with the path to the video you'd like to upload. You
         can only upload your video to the videoId once.
-
-
         ```bash
-
         curl https://ws.api.video/videos/{videoId}/source \
           -H 'Authorization: Bearer {access_token}' \
           -F file=@/path/to/video.mp4
           ```
       operationId: POST_videos-videoId-source
+      x-client-action: upload
+      x-client-chunk-upload: true
       parameters:
         - name: videoId
           in: path
           description: Enter the videoId you want to use to upload your video.
-          example: vi4k0jvEUuaTdRAEjQ4Jfrgz
           required: true
+          style: simple
+          explode: false
           schema:
             type: string
+          example: vi4k0jvEUuaTdRAEjQ4Jfrgz
         - name: Content-Range
           in: header
           description: >-
             Content-Range represents the range of bytes that will be returned as
             a result of the request. Byte ranges are inclusive, meaning that
             bytes 0-999 represents the first 1000 bytes in a file or object.
-          example: 'Content-Range: bytes 200-100/5000'
           required: false
+          x-client-ignore: true
+          style: simple
+          explode: false
           schema:
-            type: string
             pattern: '^bytes [0-9]*-[0-9]*\/[0-9]*$'
+            type: string
+          example: 'Content-Range: bytes 200-100/5000'
       requestBody:
         content:
           multipart/form-data:
             schema:
-              type: object
-              properties:
-                file:
-                  description: >-
-                    The path to the video you would like to upload. The path
-                    must be local. If you want to use a video from an online
-                    source, you must use the "/videos" endpoint and add the
-                    "source" parameter when you create a new video.
-                  example: '@/path/to/video.mp4'
-                  type: string
-              required:
-                - file
+              $ref: '#/components/schemas/video-upload-payload'
       responses:
         '201':
           description: Created
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
+                type: object
                 $ref: '#/components/schemas/video'
               examples:
                 response:
@@ -715,7 +570,7 @@ paths:
         '400':
           description: Bad Request
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/bad-request'
               examples:
@@ -741,7 +596,7 @@ paths:
         '404':
           description: Not Found
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/not-found'
               examples:
@@ -766,20 +621,26 @@ paths:
         to pick a time in the video. There may be a short delay before the new
         thumbnail is delivered to our CDN.
       operationId: POST_videos-videoId-thumbnail
+      x-client-action: uploadThumbnail
       parameters:
         - name: videoId
           in: path
           description: 'Unique identifier of the chosen video '
           required: true
+          style: simple
+          explode: false
           schema:
             type: string
       requestBody:
-        $ref: '#/components/requestBodies/POST_videos-videoId-thumbnail'
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/video-thumbnail-upload-payload'
       responses:
         '200':
           description: Success
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/video'
               examples:
@@ -822,7 +683,7 @@ paths:
         '400':
           description: Bad Request
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/bad-request'
               examples:
@@ -835,7 +696,7 @@ paths:
         '404':
           description: Not Found
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/not-found'
               examples:
@@ -857,47 +718,29 @@ paths:
         Thumbnail](https://docs.api.video/reference#post_videos-videoid-thumbnail)
         endpoint. There may be a short delay for the thumbnail to update.
       operationId: PATCH_videos-videoId-thumbnail
+      x-client-action: pickThumbnail
       parameters:
         - name: videoId
           in: path
           description: >-
             Unique identifier of the video you want to add a thumbnail to, where
             you use a section of your video as the thumbnail.
-          example: vi4k0jvEUuaTdRAEjQ4Jfrgz
           required: true
+          style: simple
+          explode: false
           schema:
             type: string
+          example: vi4k0jvEUuaTdRAEjQ4Jfrgz
       requestBody:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                timecode:
-                  type: string
-                  description: >-
-                    Frame in video to be used as a placeholder before the video
-                    plays. 
-
-                    Example: '"00:01:00.000" for 1 minute into the video.'
-
-                    Valid Patterns: 
-
-                    "hh:mm:ss.ms"
-
-                    "hh:mm:ss:frameNumber"
-
-                    "124" (integer value is reported as seconds) 
-
-                    If selection is out of range, "00:00:00.00" will be chosen.
-                  pattern: '00:00:00.00'
-              example:
-                timecode: '00:00:00.000'
+              $ref: '#/components/schemas/video-thumbnail-pick-payload'
       responses:
         '200':
           description: Success
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/video'
               examples:
@@ -939,7 +782,7 @@ paths:
         '404':
           description: Not Found
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/not-found'
               examples:
@@ -962,19 +805,23 @@ paths:
         retrieve any details you need about a video, or set up a private viewing
         URL.
       operationId: GET-video
+      x-client-action: get
       parameters:
         - name: videoId
-          description: The unique identifier for the video you want details about.
           in: path
+          description: The unique identifier for the video you want details about.
           required: true
+          style: simple
+          explode: false
           schema:
             type: string
       responses:
         '200':
           description: Success
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
+                type: object
                 $ref: '#/components/schemas/video'
               examples:
                 response:
@@ -1016,7 +863,7 @@ paths:
         '404':
           description: Not Found
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/not-found'
               examples:
@@ -1036,21 +883,24 @@ paths:
         If you do not need a video any longer, you can send a request to delete
         it. All you need is the videoId.
       operationId: DELETE-video
+      x-client-action: delete
       parameters:
         - name: videoId
-          example: vi4k0jvEUuaTdRAEjQ4Jfrgz
-          description: The video ID for the video you want to delete.
           in: path
+          description: The video ID for the video you want to delete.
           required: true
+          style: simple
+          explode: false
           schema:
             type: string
+          example: vi4k0jvEUuaTdRAEjQ4Jfrgz
       responses:
         '204':
           description: No Content
         '404':
           description: Not Found
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/not-found'
               examples:
@@ -1074,92 +924,22 @@ paths:
         the entire array as what you provide here overwrites what is in the
         system rather than appending to it.
       operationId: PATCH-video
+      x-client-action: update
       parameters:
         - name: videoId
-          example: vi4k0jvEUuaTdRAEjQ4Jfrgz
-          description: The video ID for the video you want to delete.
           in: path
+          description: The video ID for the video you want to delete.
           required: true
+          style: simple
+          explode: false
           schema:
             type: string
+          example: vi4k0jvEUuaTdRAEjQ4Jfrgz
       requestBody:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                playerId:
-                  type: string
-                  description: >-
-                    The unique ID for the player you want to associate with your
-                    video.
-                  example: pl4k0jvEUuaTdRAEjQ4Jfrgz
-                title:
-                  type: string
-                  description: The title you want to use for your video.
-                description:
-                  type: string
-                  description: A brief description of the video.
-                  example: A film about good books.
-                public:
-                  type: boolean
-                  description: >-
-                    Whether the video is publicly available or not. False means
-                    it is set to private.
-                  example: true
-                panoramic:
-                  type: boolean
-                  description: Whether the video is a 360 degree or immersive video.
-                  example: false
-                mp4Support:
-                  type: boolean
-                  description: Whether the player supports the mp4 format.
-                  example: true
-                tags:
-                  type: array
-                  description: >-
-                    A list of terms or words you want to tag the video with.
-                    Make sure the list includes all the tags you want as
-                    whatever you send in this list will overwrite the existing
-                    list for the video.
-                  example: '["maths", "string theory", "video"]'
-                  items:
-                    type: string
-                metadata:
-                  type: array
-                  description: >-
-                    A list (array) of dictionaries where each dictionary
-                    contains a key value pair that describes the video. As with
-                    tags, you must send the complete list of metadata you want
-                    as whatever you send here will overwrite the existing
-                    metadata for the video.
-                  items:
-                    type: object
-                    properties:
-                      key:
-                        type: string
-                        description: The constant that defines the data set.
-                        example: Color
-                      value:
-                        type: string
-                        description: A variable which belongs to the data set.
-                        example: Green
-              example:
-                playerId: pl45KFKdlddgk654dspkze
-                title: String theory
-                description: An amazing video explaining the string theory
-                public: false
-                panoramic: false
-                mp4Support: true
-                tags:
-                  - maths
-                  - string theory
-                  - video
-                metadata:
-                  - key: Author
-                    value: John Doe
-                  - key: Format
-                    value: Tutorial
+              $ref: '#/components/schemas/video-update-payload'
       responses:
         '200':
           description: Success
@@ -1250,24 +1030,25 @@ paths:
       description: >-
         This API provides upload status & encoding status to determine when the
         video is uploaded or ready to playback.
-
-
         Once encoding is completed, the response also lists the available stream
         qualities.
       operationId: GET-video-status
+      x-client-action: getVideoStatus
       parameters:
         - name: videoId
           in: path
           description: The unique identifier for the video you want the status for.
-          example: vi4k0jvEUuaTdRAEjQ4Jfrgz
           required: true
+          style: simple
+          explode: false
           schema:
             type: string
+          example: vi4k0jvEUuaTdRAEjQ4Jfrgz
       responses:
         '200':
           description: Success
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/videostatus'
               examples:
@@ -1312,7 +1093,7 @@ paths:
         '404':
           description: Not Found
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/not-found'
               examples:
@@ -1334,6 +1115,9 @@ paths:
         API key. Use this endpoint to retrieve a list of all currently active
         delegated tokens.
       operationId: GET_upload-tokens
+      x-group-parameters: true
+      x-client-paginated: true
+      x-client-action: listTokens
       parameters:
         - name: sortBy
           in: query
@@ -1341,64 +1125,38 @@ paths:
             Allowed: createdAt, ttl. You can use these to sort by when a token
             was created, or how much longer the token will be active (ttl - time
             to live). Date and time is presented in ISO-8601 format.
-          example: ttl
           required: false
+          style: form
+          explode: true
           schema:
             type: string
             enum:
               - createdAt
               - ttl
+          example: ttl
         - name: sortOrder
           in: query
           description: >-
             Allowed: asc, desc. Ascending is 0-9 or A-Z. Descending is 9-0 or
             Z-A.
-          example: asc
           required: false
+          style: form
+          explode: true
           schema:
             type: string
             enum:
               - asc
               - desc
-        - name: currentPage
-          in: query
-          description: Number of the page to display.
-          example: 3
-          required: false
-          schema:
-            type: integer
-            minimum: 1
-            default: 1
-        - name: pageSize
-          in: query
-          description: >-
-            Expected number of items to display on the page. If there are less
-            items than fill a page, the page will be shorter than the requested
-            number of items.
-          example: 20
-          required: false
-          schema:
-            type: integer
-            minimum: 1
-            maximum: 100
-            default: 25
+          example: asc
+        - $ref: '#/components/parameters/currentPage'
+        - $ref: '#/components/parameters/pageSize'
       responses:
         '200':
           description: Success
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
-                type: object
-                required:
-                  - data
-                  - pagination
-                properties:
-                  data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/upload-token'
-                  pagination:
-                    $ref: '#/components/schemas/pagination'
+                $ref: '#/components/schemas/token-list-response'
               examples:
                 response:
                   value:
@@ -1434,28 +1192,17 @@ paths:
         Use this endpoint to generate an upload token. You can use this token to
         authenticate video uploads while keeping your API key safe.
       operationId: POST_upload-tokens
+      x-client-action: createToken
       requestBody:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                ttl:
-                  type: integer
-                  description: >-
-                    Time in seconds that the token will be active. A value of 0
-                    means that the token has no exipration date. The default is
-                    to have no expiration.
-                  default: 0
-                  minimum: 0
-                  maximum: 2147483647
-              example:
-                ttl: 3600
+              $ref: '#/components/schemas/token-create-payload'
       responses:
         '200':
           description: Success
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/upload-token'
               examples:
@@ -1468,7 +1215,7 @@ paths:
         '400':
           description: Bad Request
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/bad-request'
       security:
@@ -1484,19 +1231,22 @@ paths:
         endpoint. Details include time-to-live (ttl), when the token was
         created, and when it will expire.
       operationId: GET_upload-tokens-uploadToken
+      x-client-action: getToken
       parameters:
         - name: uploadToken
-          description: The unique identifier for the token you want information about.
-          example: to1tcmSFHeYY5KzyhOqVKMKb
           in: path
+          description: The unique identifier for the token you want information about.
           required: true
+          style: simple
+          explode: false
           schema:
             type: string
+          example: to1tcmSFHeYY5KzyhOqVKMKb
       responses:
         '200':
           description: Success
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/upload-token'
               examples:
@@ -1509,7 +1259,7 @@ paths:
         '404':
           description: Not Found
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/not-found'
       security:
@@ -1522,24 +1272,27 @@ paths:
         Delete an existing upload token. This is especially useful for tokens
         you may have created that do not expire.
       operationId: DELETE_upload-tokens-uploadToken
+      x-client-action: deleteToken
       parameters:
         - name: uploadToken
+          in: path
           description: >-
             The unique identifier for the upload token you want to delete.
             Deleting a token will make it so the token can no longer be used for
             authentication.
-          example: to1tcmSFHeYY5KzyhOqVKMKb
-          in: path
           required: true
+          style: simple
+          explode: false
           schema:
             type: string
+          example: to1tcmSFHeYY5KzyhOqVKMKb
       responses:
         '204':
           description: No Content
         '404':
           description: Not Found
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/not-found'
       security:
@@ -1551,49 +1304,44 @@ paths:
       summary: Upload with an upload token
       description: "When given a token, anyone can upload a file to the URI `https://ws.api.video/upload?token=<tokenId>`.\n\nExample with cURL:\n\n```curl\n$ curl  --request POST --url 'https://ws.api.video/upload?token=toXXX'\n --header 'content-type: multipart/form-data'\n -F file=@video.mp4\n```\n\nOr in an HTML form, with a little JavaScript to convert the form into JSON:\n```html\n<!--form for user interaction-->\n<form name=\"videoUploadForm\" >\n  <label for=video>Video:</label>\n  <input type=file name=source/><br/>\n  <input value=\"Submit\" type=\"submit\">\n</form>\n<div></div>\n<!--JS takes the form data \n    uses FormData to turn the response into JSON.\n    then uses POST to upload the video file.\n    Update the token parameter in the url to your upload token.\n    -->\n<script>\n   var form = document.forms.namedItem(\"videoUploadForm\");\t\n   form.addEventListener('submit', function(ev) {\n\t ev.preventDefault();\n     var oOutput = document.querySelector(\"div\"),\n         oData = new FormData(form);\n     var oReq = new XMLHttpRequest();\n\t \n     oReq.open(\"POST\", \"https://ws.api.video/upload?token=toXXX\", true);\n     oReq.send(oData);\n\t oReq.onload = function(oEvent) {\n       if (oReq.status ==201) {\n         oOutput.innerHTML = \"Your video is uploaded!<br/>\"  + oReq.response;\n       } else {\n         oOutput.innerHTML = \"Error \" + oReq.status + \" occurred when trying to upload your file.<br \\/>\";\n       }\n     };\n   }, false);\t\n</script>\n```\n\n\n### Dealing with large files\n\nWe have created a <a href='https://api.video/blog/tutorials/uploading-large-files-with-javascript'>tutorial</a> to walk through the steps required."
       operationId: POST_upload
+      x-client-action: upload
+      x-client-chunk-upload: true
       parameters:
         - name: token
+          in: query
           description: >-
             The unique identifier for the token you want to use to upload a
             video.
-          example: to1tcmSFHeYY5KzyhOqVKMKb
-          in: query
-          required: false
+          required: true
+          style: form
+          explode: true
           schema:
             type: string
+          example: to1tcmSFHeYY5KzyhOqVKMKb
         - name: Content-Range
+          in: header
           description: >-
             Content-Range represents the range of bytes that will be returned as
             a result of the request. Byte ranges are inclusive, meaning that
             bytes 0-999 represents the first 1000 bytes in a file or object.
-          example: 'Content-Range: bytes 200-100/5000'
-          in: header
           required: false
+          x-client-ignore: true
+          style: simple
+          explode: false
           schema:
-            type: string
             pattern: '^bytes [0-9]*-[0-9]*\/[0-9]*$'
+            type: string
+          example: 'Content-Range: bytes 200-100/5000'
       requestBody:
         content:
           multipart/form-data:
             schema:
-              type: object
-              properties:
-                file:
-                  description: The path to the video you want to upload.
-                  type: string
-                  example: path/to/video/video.mp4
-                videoId:
-                  description: >-
-                    The video id returned by the first call to this endpoint in
-                    a large video upload scenario.
-                  type: string
-              required:
-                - file
+              $ref: '#/components/schemas/token-upload-payload'
       responses:
         '201':
           description: Created
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/video'
               examples:
@@ -1632,9 +1380,10 @@ paths:
         '400':
           description: Bad Request
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/bad-request'
+      security: []
   /live-streams:
     get:
       tags:
@@ -1644,21 +1393,28 @@ paths:
         With no parameters added to the url, this will return all livestreams.
         Query by name or key to limit the list.
       operationId: GET_live-streams
+      x-client-action: list
+      x-group-parameters: true
+      x-client-paginated: true
       parameters:
         - name: streamKey
+          in: query
           description: The unique stream key that allows you to stream videos.
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: string
           example: 30087931-229e-42cf-b5f9-e91bcc1f7332
-          in: query
-          required: false
-          schema:
-            type: string
         - name: name
-          description: You can filter live streams by their name or a part of their name.
-          example: My Video
           in: query
+          description: You can filter live streams by their name or a part of their name.
           required: false
+          style: form
+          explode: true
           schema:
             type: string
+          example: My Video
         - name: sortBy
           in: query
           description: >-
@@ -1667,10 +1423,12 @@ paths:
             the time a livestream was published using the specified streamKey.
             name - the name of the livestream. If you choose one of the time
             based options, the time is presented in ISO-8601 format.
-          example: createdAt
           required: false
+          style: form
+          explode: true
           schema:
             type: string
+          example: createdAt
         - name: sortOrder
           in: query
           description: >-
@@ -1678,51 +1436,24 @@ paths:
             values precede later ones. Descending means that later values preced
             earlier ones. For title, it is 0-9 and A-Z ascending and Z-A, 9-0
             descending.
-          example: desc
           required: false
+          style: form
+          explode: true
           schema:
             type: string
             enum:
               - asc
               - desc
-        - name: currentPage
-          in: query
-          description: Number of the page to display.
-          example: 3
-          required: false
-          schema:
-            type: integer
-            minimum: 1
-            default: 1
-        - name: pageSize
-          in: query
-          description: >-
-            Expected number of items to display on the page. If there are not
-            enough items to fill the last page, it will be partially filled.
-          example: 30
-          required: false
-          schema:
-            type: integer
-            minimum: 1
-            maximum: 100
-            default: 25
+          example: desc
+        - $ref: '#/components/parameters/currentPage'
+        - $ref: '#/components/parameters/pageSize'
       responses:
         '200':
           description: Success
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
-                type: object
-                required:
-                  - data
-                  - pagination
-                properties:
-                  data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/live-stream'
-                  pagination:
-                    $ref: '#/components/schemas/pagination'
+                $ref: '#/components/schemas/live-stream-list-response'
               examples:
                 response:
                   value:
@@ -1788,56 +1519,25 @@ paths:
         A live stream will give you the 'connection point' to RTMP your video
         stream to api.video. It will also give you the details for viewers to
         watch the same livestream. 
-        
-        The public=false 'private livestream' is available as a BETA feature, and should be limited to livestreams of 3,000 viewers or fewer.
-
-
+        The public=false 'private livestream' is available as a BETA feature,
+        and should be limited to livestreams of 3,000 viewers or fewer.
         See our [Live Stream
         Tutorial](https://api.video/blog/tutorials/live-stream-tutorial) for a
         walkthrough of this API with OBS.
-        
-        Your RTMP endpoint for the livestream is rtmp://broadcast.api.video/s/{streamKey}
+        Your RTMP endpoint for the livestream is
+        rtmp://broadcast.api.video/s/{streamKey}
       operationId: POST_live-streams
+      x-client-action: create
       requestBody:
         content:
           application/json:
             schema:
-              type: object
-              required:
-                - name
-              properties:
-                name:
-                  type: string
-                  description: Add a name for your live stream here.
-                  example: My Live Stream Video
-                record:
-                  type: boolean
-                  default: false
-                  description: >-
-                    Whether you are recording or not. True for record, false for
-                    not record.
-                  example: true
-                public:
-                  type: boolean
-                  description: >-
-                    BETA FEATURE Please limit all public = false ("private") livestreams to 3,000 users.
-                    Whether your video can be viewed by everyone, or requires
-                    authentication to see it. A setting of false will require a
-                    unique token for each view.
-                playerId:
-                  type: string
-                  description: >-
-                    The unique identifier for the player.
-                  example: pl4f4ferf5erfr5zed4fsdd
-              example:
-                name: Test live
-                record: true
-                playerId: pl4f4ferf5erfr5zed4fsdd
+              $ref: '#/components/schemas/live-stream-create-payload'
       responses:
         '200':
           description: Success
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/live-stream'
               examples:
@@ -1864,7 +1564,7 @@ paths:
         '400':
           description: Bad Request
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/bad-request'
       security:
@@ -1878,19 +1578,22 @@ paths:
         Supply a LivestreamId, and you'll get all the details for streaming
         into, and watching the livestream.
       operationId: GET_live-streams-liveStreamId
+      x-client-action: get
       parameters:
         - name: liveStreamId
           in: path
           description: The unique ID for the live stream you want to watch.
-          example: li400mYKSgQ6xs7taUeSaEKr
           required: true
+          style: simple
+          explode: false
           schema:
             type: string
+          example: li400mYKSgQ6xs7taUeSaEKr
       responses:
         '200':
           description: Success
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/live-stream'
               examples:
@@ -1921,14 +1624,17 @@ paths:
         - Live
       summary: Delete a live stream
       operationId: DELETE_live-streams-liveStreamId
+      x-client-action: delete
       parameters:
         - name: liveStreamId
-          description: The unique ID for the live stream that you want to remove.
-          example: li400mYKSgQ6xs7taUeSaEKr
           in: path
+          description: The unique ID for the live stream that you want to remove.
           required: true
+          style: simple
+          explode: false
           schema:
             type: string
+          example: li400mYKSgQ6xs7taUeSaEKr
       responses:
         '204':
           description: No Content
@@ -1942,55 +1648,33 @@ paths:
         Use this endpoint to update the player, or to turn recording on/off
         (saving a copy of the livestream). NOTE: If the livestream is actively
         streaming, changing the recording status will only affect the NEXT
-        stream.   
-        The public=false 'private livestream' is available as a BETA feature, and should be limited to livestreams of 3,000 viewers or fewer.
+        stream.    The public=false 'private livestream' is available as a BETA
+        feature, and should be limited to livestreams of 3,000 viewers or fewer.
       operationId: PATCH_live-streams-liveStreamId
+      x-client-action: update
       parameters:
         - name: liveStreamId
+          in: path
           description: >-
             The unique ID for the live stream that you want to update
             information for such as player details, or whether you want the
             recording on or off.
-          example: li400mYKSgQ6xs7taUeSaEKr
-          in: path
           required: true
+          style: simple
+          explode: false
           schema:
             type: string
+          example: li400mYKSgQ6xs7taUeSaEKr
       requestBody:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                  description: The name you want to use for your live stream.
-                  example: My Live Stream Video
-                public:
-                  type: boolean
-                  description: >-
-                    BETA FEATURE Please limit all public = false ("private") livestreams to 3,000 users.
-                    
-                    Whether your video can be viewed by everyone, or requires
-                    authentication to see it. A setting of false will require a
-                    unique token for each view.
-                record:
-                  type: boolean
-                  description: >-
-                    Use this to indicate whether you want the recording on or
-                    off. On is true, off is false.
-                  example: true
-                playerId:
-                  type: string
-                  description: >-
-                    The unique ID for the player associated with a live stream
-                    that you want to update.
-                  example: pl45KFKdlddgk654dspkze
+              $ref: '#/components/schemas/live-stream-update-payload'
       responses:
         '200':
           description: Success
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/live-stream'
               examples:
@@ -2017,7 +1701,7 @@ paths:
         '400':
           description: Bad Request
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/bad-request'
       security:
@@ -2029,27 +1713,33 @@ paths:
       summary: Upload a thumbnail
       description: Upload an image to use as a backdrop for your livestream.
       operationId: POST_live-streams-liveStreamId-thumbnail
+      x-client-action: uploadThumbnail
       parameters:
         - name: liveStreamId
           in: path
           description: The unique ID for the live stream you want to upload.
-          example: vi4k0jvEUuaTdRAEjQ4Jfrgz
           required: true
+          style: simple
+          explode: false
           schema:
             type: string
+          example: vi4k0jvEUuaTdRAEjQ4Jfrgz
       requestBody:
-        $ref: '#/components/requestBodies/POST_videos-videoId-thumbnail'
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/live-stream-thumbnail-upload-payload'
       responses:
         '201':
           description: Created
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/live-stream'
         '400':
           description: Bad Request
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/bad-request'
               examples:
@@ -2062,7 +1752,7 @@ paths:
         '404':
           description: Not Found
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/not-found'
               examples:
@@ -2082,26 +1772,28 @@ paths:
         Send the unique identifier for a live stream to delete it from the
         system.
       operationId: DELETE_live-streams-liveStreamId-thumbnail
+      x-client-action: deleteThumbnail
       parameters:
         - name: liveStreamId
-          description: >-
-            The unique identifier for the live stream you want to delete. 
-          example: li400mYKSgQ6xs7taUeSaEKr
           in: path
+          description: 'The unique identifier for the live stream you want to delete. '
           required: true
+          style: simple
+          explode: false
           schema:
             type: string
+          example: li400mYKSgQ6xs7taUeSaEKr
       responses:
         '200':
           description: Success
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/live-stream'
         '404':
           description: Not Found
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/not-found'
               examples:
@@ -2123,29 +1815,34 @@ paths:
         available, the caption is returned. Otherwise, you will get a response
         indicating the caption was not found.
       operationId: GET_videos-videoId-captions-language
+      x-client-action: get
       parameters:
         - name: videoId
-          description: The unique identifier for the video you want captions for.
-          example: vi4k0jvEUuaTdRAEjQ4Prklg
           in: path
+          description: The unique identifier for the video you want captions for.
           required: true
+          style: simple
+          explode: false
           schema:
             type: string
+          example: vi4k0jvEUuaTdRAEjQ4Prklg
         - name: language
           in: path
           description: >-
             A valid [BCP
             47](https://github.com/libyal/libfwnt/wiki/Language-Code-identifiers)
             language representation
-          example: en
           required: true
+          style: simple
+          explode: false
           schema:
             type: string
+          example: en
       responses:
         '200':
           description: Success
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/subtitle'
               examples:
@@ -2159,7 +1856,7 @@ paths:
         '404':
           description: Not Found
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/not-found'
       security:
@@ -2172,40 +1869,36 @@ paths:
         Upload a VTT file to add captions to your video.
          Read our [captioning tutorial](https://api.video/blog/tutorials/adding-captions) for more details.
       operationId: POST_videos-videoId-captions-language
+      x-client-action: upload
       parameters:
         - name: videoId
-          description: The unique identifier for the video you want to add a caption to.
-          example: vi4k0jvEUuaTdRAEjQ4Prklg
           in: path
+          description: The unique identifier for the video you want to add a caption to.
           required: true
+          style: simple
+          explode: false
           schema:
             type: string
+          example: vi4k0jvEUuaTdRAEjQ4Prklg
         - name: language
           in: path
           description: A valid BCP 47 language representation.
-          example: en
           required: true
+          style: simple
+          explode: false
           schema:
             type: string
+          example: en
       requestBody:
         content:
           multipart/form-data:
             schema:
-              type: object
-              properties:
-                file:
-                  description: The video text track (VTT) you want to upload.
-                  example: >-
-                    https://cdn.api.video/vod/vi3N6cDinStg3oBbN79GklWS/captions/en.vtt
-                  type: string
-                  format: binary
-              required:
-                - file
+              $ref: '#/components/schemas/captions-upload-payload'
       responses:
         '200':
           description: Success
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/subtitle'
               examples:
@@ -2219,13 +1912,13 @@ paths:
         '400':
           description: Bad Request
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/bad-request'
         '404':
           description: Not Found
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/not-found'
       security:
@@ -2239,33 +1932,38 @@ paths:
         the video you want to delete the caption from and the language the
         caption is in.
       operationId: DELETE_videos-videoId-captions-language
+      x-client-action: delete
       parameters:
         - name: videoId
+          in: path
           description: >-
             The unique identifier for the video you want to delete a caption
             from.
-          example: vi4k0jvEUuaTdRAEjQ4Prklgc
-          in: path
           required: true
+          style: simple
+          explode: false
           schema:
             type: string
+          example: vi4k0jvEUuaTdRAEjQ4Prklgc
         - name: language
           in: path
           description: >-
             A valid [BCP
             47](https://github.com/libyal/libfwnt/wiki/Language-Code-identifiers)
             language representation.
-          example: en
           required: true
+          style: simple
+          explode: false
           schema:
             type: string
+          example: en
       responses:
         '204':
           description: No Content
         '404':
           description: Not Found
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/not-found'
       security:
@@ -2278,39 +1976,41 @@ paths:
         To have the captions on automatically, use this PATCH to set default:
         true.
       operationId: PATCH_videos-videoId-captions-language
+      x-client-action: update
       parameters:
         - name: videoId
+          in: path
           description: >-
             The unique identifier for the video you want to have automatic
             captions for. 
-          example: vi4k0jvEUuaTdRAEjQ4Prklg
-          in: path
           required: true
+          style: simple
+          explode: false
           schema:
             type: string
+          example: vi4k0jvEUuaTdRAEjQ4Prklg
         - name: language
           in: path
           description: >-
             A valid [BCP
             47](https://github.com/libyal/libfwnt/wiki/Language-Code-identifiers)
             language representation.
-          example: en
           required: true
+          style: simple
+          explode: false
           schema:
             type: string
+          example: en
       requestBody:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                default:
-                  type: boolean
+              $ref: '#/components/schemas/captions-update-payload'
       responses:
         '200':
           description: Success
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/subtitle'
               examples:
@@ -2324,7 +2024,7 @@ paths:
         '400':
           description: Bad Request
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/bad-request'
               examples:
@@ -2339,7 +2039,7 @@ paths:
         '404':
           description: Not Found
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/not-found'
               examples:
@@ -2358,30 +2058,30 @@ paths:
       summary: List video captions
       description: Retrieve a list of available captions for the videoId you provide.
       operationId: GET_videos-videoId-captions
+      x-client-action: list
+      x-group-parameters: true
+      x-client-paginated: true
       parameters:
         - name: videoId
+          in: path
           description: >-
             The unique identifier for the video you want to retrieve a list of
             captions for.
-          example: vi4k0jvEUuaTdRAEjQ4Prklg
-          in: path
           required: true
+          style: simple
+          explode: false
           schema:
             type: string
+          example: vi4k0jvEUuaTdRAEjQ4Prklg
+        - $ref: '#/components/parameters/currentPage'
+        - $ref: '#/components/parameters/pageSize'
       responses:
         '200':
           description: Success
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/subtitle'
-                  pagination:
-                    $ref: '#/components/schemas/pagination'
+                $ref: '#/components/schemas/captions-list-response'
               examples:
                 response:
                   value:
@@ -2415,7 +2115,7 @@ paths:
         '404':
           description: Not Found
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/not-found'
       security:
@@ -2426,31 +2126,34 @@ paths:
         - Chapters
       summary: Show a chapter
       operationId: GET_videos-videoId-chapters-language
+      x-client-action: get
       parameters:
         - name: videoId
-          description: >-
-            The unique identifier for the video you want to show a chapter for.
-            
-          example: vi4k0jvEUuaTdRAEjQ4Jfrgz
           in: path
+          description: The unique identifier for the video you want to show a chapter for.
           required: true
+          style: simple
+          explode: false
           schema:
             type: string
+          example: vi4k0jvEUuaTdRAEjQ4Jfrgz
         - name: language
           in: path
           description: >-
             A valid [BCP
             47](https://github.com/libyal/libfwnt/wiki/Language-Code-identifiers)
             language representation.
-          example: en
           required: true
+          style: simple
+          explode: false
           schema:
             type: string
+          example: en
       responses:
         '200':
           description: Success
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/chapter'
               examples:
@@ -2463,7 +2166,7 @@ paths:
         '404':
           description: Not Found
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/not-found'
       security:
@@ -2477,42 +2180,41 @@ paths:
         [tutorial](https://api.video/blog/tutorials/adding-chapters-to-your-videos)
         for more details.
       operationId: POST_videos-videoId-chapters-language
+      x-client-action: upload
       parameters:
         - name: videoId
+          in: path
           description: >-
             The unique identifier for the video you want to upload a chapter
             for.
-          example: vi4k0jvEUuaTdRAEjQ4Jfrgz
-          in: path
           required: true
+          style: simple
+          explode: false
           schema:
             type: string
+          example: vi4k0jvEUuaTdRAEjQ4Jfrgz
         - name: language
           in: path
           description: >-
             A valid [BCP
             47](https://github.com/libyal/libfwnt/wiki/Language-Code-identifiers)
             language representation.
-          example: en
           required: true
+          style: simple
+          explode: false
           schema:
             type: string
+          example: en
       requestBody:
         content:
           multipart/form-data:
             schema:
-              type: object
-              properties:
-                file:
-                  description: The VTT file describing the chapters you want to upload.
-                  type: string
-              required:
-                - file
+              $ref: '#/components/schemas/chapters-update-payload'
       responses:
         '200':
           description: Success
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/chapter'
               examples:
@@ -2525,13 +2227,13 @@ paths:
         '400':
           description: Bad Request
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/bad-request'
         '404':
           description: Not Found
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/not-found'
       security:
@@ -2541,33 +2243,38 @@ paths:
         - Chapters
       summary: Delete a chapter
       operationId: DELETE_videos-videoId-chapters-language
+      x-client-action: delete
       parameters:
         - name: videoId
+          in: path
           description: >-
             The unique identifier for the video you want to delete a chapter
             from. 
-          example: vi4k0jvEUuaTdRAEjQ4Jfrgz
-          in: path
           required: true
+          style: simple
+          explode: false
           schema:
             type: string
+          example: vi4k0jvEUuaTdRAEjQ4Jfrgz
         - name: language
           in: path
           description: >-
             A valid [BCP
             47](https://github.com/libyal/libfwnt/wiki/Language-Code-identifiers)
             language representation.
-          example: en
           required: true
+          style: simple
+          explode: false
           schema:
             type: string
+          example: en
       responses:
         '204':
           description: No Content
         '404':
           description: Not Found
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/not-found'
       security:
@@ -2579,30 +2286,30 @@ paths:
       summary: List video chapters
       description: Retrieve a list of all chapters for a specified video.
       operationId: GET_videos-videoId-chapters
+      x-client-action: list
+      x-group-parameters: true
+      x-client-paginated: true
       parameters:
         - name: videoId
+          in: path
           description: >-
             The unique identifier for the video you want to retrieve a list of
             chapters for.
-          example: vi4k0jvEUuaTdRAEjQ4Jfrgz
-          in: path
           required: true
+          style: simple
+          explode: false
           schema:
             type: string
+          example: vi4k0jvEUuaTdRAEjQ4Jfrgz
+        - $ref: '#/components/parameters/currentPage'
+        - $ref: '#/components/parameters/pageSize'
       responses:
         '200':
           description: Success
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/chapter'
-                  pagination:
-                    $ref: '#/components/schemas/pagination'
+                $ref: '#/components/schemas/chapters-list-response'
               examples:
                 response:
                   value:
@@ -2634,7 +2341,7 @@ paths:
         '404':
           description: Not Found
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/not-found'
       security:
@@ -2648,6 +2355,9 @@ paths:
         Retrieve a list of all the players you created, as well as details about
         each one.
       operationId: GET_players
+      x-client-action: list
+      x-group-parameters: true
+      x-client-paginated: true
       parameters:
         - name: sortBy
           in: query
@@ -2655,61 +2365,39 @@ paths:
             createdAt is the time the player was created. updatedAt is the time
             the player was last updated. The time is presented in ISO-8601
             format.
-          example: createdAt
           required: false
+          style: form
+          explode: true
           schema:
             type: string
             enum:
               - createdAt
               - updatedAt
+          example: createdAt
         - name: sortOrder
           in: query
           description: >-
             Allowed: asc, desc. Ascending for date and time means that earlier
             values precede later ones. Descending means that later values preced
             earlier ones.
-          example: asc
           required: false
+          style: form
+          explode: true
           schema:
             type: string
             enum:
               - asc
               - desc
-        - name: currentPage
-          in: query
-          description: Number of the page to display.
-          example: 3
-          required: false
-          schema:
-            type: integer
-            minimum: 1
-            default: 1
-        - name: pageSize
-          in: query
-          description: >-
-            Expected number of items to display on the page. Might be lower on
-            the last page.
-          example: 30
-          required: false
-          schema:
-            type: integer
-            minimum: 1
-            maximum: 100
-            default: 25
+          example: asc
+        - $ref: '#/components/parameters/currentPage'
+        - $ref: '#/components/parameters/pageSize'
       responses:
         '200':
           description: Success
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/player'
-                  pagination:
-                    $ref: '#/components/schemas/pagination'
+                $ref: '#/components/schemas/players-list-response'
               examples:
                 response:
                   value:
@@ -2776,7 +2464,7 @@ paths:
         '400':
           description: Bad Request
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/bad-request'
               examples:
@@ -2805,13 +2493,18 @@ paths:
       summary: Create a player
       description: 'Create a player for your video, and customise it.'
       operationId: POST_players
+      x-client-action: create
       requestBody:
-        $ref: '#/components/requestBodies/playerinput'
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/playerCreationPayload'
       responses:
         '201':
           description: Created
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/player'
               examples:
@@ -2850,20 +2543,22 @@ paths:
         Use a player ID to retrieve details about the player and display it for
         viewers.
       operationId: GET_players-playerId
+      x-client-action: get
       parameters:
         - name: playerId
-          description: >-
-            The unique identifier for the player you want to retrieve. 
-          example: pl45d5vFFGrfdsdsd156dGhh
           in: path
+          description: 'The unique identifier for the player you want to retrieve. '
           required: true
+          style: simple
+          explode: false
           schema:
             type: string
+          example: pl45d5vFFGrfdsdsd156dGhh
       responses:
         '200':
           description: Success
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/player'
               examples:
@@ -2894,7 +2589,7 @@ paths:
         '404':
           description: Not Found
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/not-found'
               examples:
@@ -2914,21 +2609,24 @@ paths:
         Delete a player if you no longer need it. You can delete any player that
         you have the player ID for.
       operationId: DELETE_players-playerId
+      x-client-action: delete
       parameters:
         - name: playerId
-          description: The unique identifier for the player you want to delete.
-          example: pl45d5vFFGrfdsdsd156dGhh
           in: path
+          description: The unique identifier for the player you want to delete.
           required: true
+          style: simple
+          explode: false
           schema:
             type: string
+          example: pl45d5vFFGrfdsdsd156dGhh
       responses:
         '204':
           description: No Content
         '404':
           description: Not Found
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/not-found'
               examples:
@@ -2949,21 +2647,28 @@ paths:
         take up to 10 min before the new player configuration is available from
         our CDN.
       operationId: PATCH_players-playerId
+      x-client-action: update
       parameters:
         - name: playerId
-          description: The unique identifier for the player.
-          example: pl45d5vFFGrfdsdsd156dGhh
           in: path
+          description: The unique identifier for the player.
           required: true
+          style: simple
+          explode: false
           schema:
             type: string
+          example: pl45d5vFFGrfdsdsd156dGhh
       requestBody:
-        $ref: '#/components/requestBodies/playerinput'
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/playerUpdatePayload'
       responses:
         '200':
           description: Success
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/player'
               examples:
@@ -2994,7 +2699,7 @@ paths:
         '404':
           description: Not Found
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/not-found'
               examples:
@@ -3014,47 +2719,36 @@ paths:
       description: >-
         The uploaded image maximum size should be 200x100 and its weight should
         be 200KB. 
-
         It will be scaled down to 30px height and converted to PNG to be
         displayed in the player.
       operationId: POST_players-playerId-logo
+      x-client-action: uploadLogo
       parameters:
         - name: playerId
-          description: The unique identifier for the player. 
-          example: pl14Db6oMJRH6SRVoOwORacK
           in: path
+          description: The unique identifier for the player.
           required: true
+          style: simple
+          explode: false
           schema:
             type: string
+          example: pl14Db6oMJRH6SRVoOwORacK
       requestBody:
         content:
           multipart/form-data:
             schema:
-              type: object
-              properties:
-                file:
-                  type: string
-                  description: The name of the file you want to use for your logo.
-                  example: mylogo.jpg
-                link:
-                  type: string
-                  format: uri
-                  description: The path to the file you want to upload and use as a logo.
-                  example: path/to/my/logo/mylogo.jpg
-              required:
-                - file
-                - link
+              $ref: '#/components/schemas/players-upload-logo-payload'
       responses:
         '201':
           description: Created
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/player'
         '400':
           description: Bad Request
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/bad-request'
               examples:
@@ -3069,7 +2763,7 @@ paths:
         '404':
           description: Not Found
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/not-found'
               examples:
@@ -3086,25 +2780,28 @@ paths:
         - Players
       summary: Delete logo
       operationId: DELETE_players-playerId-logo
+      x-client-action: deleteLogo
       parameters:
         - name: playerId
-          description: The unique identifier for the player. 
-          example: pl14Db6oMJRH6SRVoOwORacK
           in: path
+          description: The unique identifier for the player.
           required: true
+          style: simple
+          explode: false
           schema:
             type: string
+          example: pl14Db6oMJRH6SRVoOwORacK
       responses:
         '204':
           description: No Content
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 type: object
         '404':
           description: Not Found
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/not-found'
               examples:
@@ -3123,81 +2820,61 @@ paths:
       summary: List video player sessions
       description: Retrieve all available user sessions for a specific video.
       operationId: GET_analytics-videos-videoId
+      x-client-action: listSessions
+      x-group-parameters: true
+      x-client-paginated: true
       parameters:
         - name: videoId
+          in: path
           description: >-
             The unique identifier for the video you want to retrieve session
             information for.
-          example: vi4k0jvEUuaTdRAEjQ4Prklg
-          in: path
           required: true
+          style: simple
+          explode: false
           schema:
             type: string
+          example: vi4k0jvEUuaTdRAEjQ4Prklg
         - name: period
           in: query
           description: |
             Period must have one of the following formats: 
-
             - For a day : 2018-01-01,
             - For a week: 2018-W01, 
             - For a month: 2018-01
             - For a year: 2018
-
             For a range period: 
             -  Date range: 2018-01-01/2018-01-15
           required: false
+          style: form
+          explode: true
           schema:
             type: string
-            format: date
+            format: period
         - name: metadata
           in: query
           description: >-
             Metadata and Dynamic Metadata filter. Send an array of key value
             pairs you want to filter sessios with.
-          example: >-
-            [{"key": "Author", "value": "John Doe"}, {"key": "Format", "value":
-            "Tutorial"}]
           required: false
+          style: form
           explode: true
           schema:
             type: array
             items:
               type: string
-        - name: currentPage
-          in: query
-          description: Number of the page to display.
-          example: 3
-          required: false
-          schema:
-            type: integer
-            minimum: 1
-            default: 1
-        - name: pageSize
-          in: query
-          description: >-
-            Expected number of items to display on the page. Might be lower on
-            the last page.
-          example: 30
-          required: false
-          schema:
-            type: integer
-            minimum: 1
-            maximum: 100
-            default: 25
+          example: >-
+            [{"key": "Author", "value": "John Doe"}, {"key": "Format", "value":
+            "Tutorial"}]
+        - $ref: '#/components/parameters/currentPage'
+        - $ref: '#/components/parameters/pageSize'
       responses:
         '200':
           description: Success
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/video-session'
-                  pagination:
-                    $ref: '#/components/schemas/pagination'
+                $ref: '#/components/schemas/raw-statistics-list-sessions-response'
               examples:
                 response:
                   value:
@@ -3245,7 +2922,7 @@ paths:
         '404':
           description: Not Found
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/not-found'
               examples:
@@ -3263,75 +2940,56 @@ paths:
         - Raw statistics
       summary: List live stream player sessions
       operationId: GET_analytics-live-streams-liveStreamId
+      x-client-action: getLiveStreamAnalytics
+      x-group-parameters: true
+      x-client-paginated: true
       parameters:
         - name: liveStreamId
+          in: path
           description: >-
             The unique identifier for the live stream you want to retrieve
             analytics for.
-          example: vi4k0jvEUuaTdRAEjQ4Jfrgz
-          in: path
           required: true
+          style: simple
+          explode: false
           schema:
             type: string
+          example: vi4k0jvEUuaTdRAEjQ4Jfrgz
         - name: period
           in: query
           description: |
             Period must have one of the following formats: 
-
             - For a day : "2018-01-01",
             - For a week: "2018-W01", 
             - For a month: "2018-01"
             - For a year: "2018"
-
             For a range period: 
             -  Date range: "2018-01-01/2018-01-15"
-          example: '2019-01-01'
           required: false
+          style: form
+          explode: true
           schema:
             type: string
-            format: date
-        - name: currentPage
-          in: query
-          description: Number of the page to display
-          example: 2
-          required: false
-          schema:
-            type: integer
-            minimum: 1
-            default: 1
-        - name: pageSize
-          in: query
-          description: >-
-            Expected number of items to display on the page. Might be lower on
-            the last page
-          required: false
-          schema:
-            type: integer
-            minimum: 1
-            maximum: 100
-            default: 25
+            format: period
+          example: '2019-01-01'
+        - $ref: '#/components/parameters/currentPage'
+        - $ref: '#/components/parameters/pageSize'
       responses:
         '200':
           description: Success
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/live-stream-session'
-                  pagination:
-                    $ref: '#/components/schemas/pagination'
+                $ref: >-
+                  #/components/schemas/raw-statistics-list-live-stream-analytics-response
               examples:
                 response:
                   value:
                     data:
                       - session:
                           sessionId: ps4zRWVOv2If2vzKJLMr3jQo
-                          loadedAt: '2018-09-11 13:04:37.89+00'
-                          endedAt: '2018-09-11 14:47:22.186+00'
+                          loadedAt: '2018-09-11T13:04:37.89+00'
+                          endedAt: '2018-09-11T14:47:22.186+00'
                         location:
                           country: France
                           city: Paris
@@ -3371,7 +3029,7 @@ paths:
         '404':
           description: Not Found
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/not-found'
               examples:
@@ -3390,51 +3048,31 @@ paths:
       summary: List player session events
       description: Useful to track and measure video's engagement.
       operationId: GET_analytics-sessions-sessionId-events
+      x-client-action: listPlayerSessionEvents
+      x-group-parameters: true
+      x-client-paginated: true
       parameters:
         - name: sessionId
+          in: path
           description: >-
             A unique identifier you can use to reference and track a session
             with.
-          example: psEmFwGQUAXR2lFHj5nDOpy
-          in: path
           required: true
+          style: simple
+          explode: false
           schema:
             type: string
-        - name: currentPage
-          in: query
-          description: Number of the page to display.
-          example: 4
-          required: false
-          schema:
-            type: integer
-            minimum: 1
-            default: 1
-        - name: pageSize
-          in: query
-          description: >-
-            Expected number of items to display on the page. Might be lower on
-            the last page if there are not enough items.
-          example: 30
-          required: false
-          schema:
-            type: integer
-            minimum: 1
-            maximum: 100
-            default: 25
+          example: psEmFwGQUAXR2lFHj5nDOpy
+        - $ref: '#/components/parameters/currentPage'
+        - $ref: '#/components/parameters/pageSize'
       responses:
         '200':
           description: Success
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
-                type: object
-                properties:
-                  data:
-                    type: array
-                    items:
-                      $ref: '#/components/schemas/player-session-event'
-                  pagination:
-                    $ref: '#/components/schemas/pagination'
+                $ref: >-
+                  #/components/schemas/raw-statistics-list-player-session-events-response
               examples:
                 response:
                   value:
@@ -3541,7 +3179,7 @@ paths:
         '404':
           description: Not Found
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/not-found'
               examples:
@@ -3554,56 +3192,101 @@ paths:
       security:
         - bearerAuth: []
   /webhooks:
+    get:
+      tags:
+        - Webhooks
+      summary: List all webhooks
+      description: >-
+        Requests to this endpoint return a list of your webhooks (with all their
+        details). You can filter what the webhook list that the API returns
+        using the parameters described below.
+      operationId: LIST-webhooks
+      x-group-parameters: true
+      x-client-paginated: true
+      x-client-action: list
+      parameters:
+        - name: events
+          in: query
+          description: The webhook event that you wish to filter on.
+          required: false
+          style: form
+          explode: true
+          schema:
+            type: string
+          example: video.encoding.quality.completed
+        - $ref: '#/components/parameters/currentPage'
+        - $ref: '#/components/parameters/pageSize'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/webhooks-list-response'
+              examples:
+                response:
+                  value:
+                    data:
+                      - webhookId: webhook_XXXXXXXXXXXXXXX
+                        createdAt: '2021-01-08T14:12:18.000+00:00'
+                        events:
+                          - video.encoding.quality.completed
+                        url: >-
+                          http://clientnotificationserver.com/notif?myquery=query
+                      - webhookId: webhook_XXXXXXXXXYYYYYY
+                        createdAt: '2021-01-12T12:12:12.000+00:00'
+                        events:
+                          - video.encoding.quality.completed
+                        url: >-
+                          http://clientnotificationserver.com/notif?myquery=query2
+                    pagination:
+                      currentPage: 1
+                      pageSize: 25
+                      pagesTotal: 1
+                      itemsTotal: 11
+                      currentPageItems: 11
+                      links:
+                        - rel: self
+                          uri: 'https://ws.api.video/webhooks?currentPage=1'
+                        - rel: first
+                          uri: 'https://ws.api.video/webhooks?currentPage=1'
+                        - rel: last
+                          uri: 'https://ws.api.video/webhooks?currentPage=1'
+      security:
+        - bearerAuth: []
     post:
       tags:
         - Webhooks
       summary: Create Webhook
-      description: "Webhooks can push notifications to your server, rather than polling api.video for changes. We currently offer one event, the ```video.encoding.quality.completed``` event.  When a new video is uploaded into your account, it will be encoded into several different HLS sizes/bitrates.  When each version is encoded, your webhook will get a notification.  It will look like ```{ \"type\": \"video.encoding.quality.completed\", \"emittedAt\": \"2021-01-29T16:46:25.217+01:00\", \"videoId\": \"viXXXXXXXX\", \"encoding\": \"hls\", \"quality\": \"720p\"} ```. This request says that the 720p HLS encoding was completed."
+      x-client-action: create
+      description: >-
+        Webhooks can push notifications to your server, rather than polling
+        api.video for changes. We currently offer one event, the ```video.encoding.quality.completed``` event.  When a new video is uploaded into your account, it will be encoded into several different HLS sizes/bitrates.  When each version is encoded, your webhook will get a notification.  It will look like ```{ \"type\": \"video.encoding.quality.completed\", \"emittedAt\": \"2021-01-29T16:46:25.217+01:00\", \"videoId\": \"viXXXXXXXX\", \"encoding\": \"hls\", \"quality\": \"720p\"} ```. This request says that the 720p HLS encoding was completed.
       operationId: POST-webhooks
       requestBody:
-          content:
-            application/json:
-              schema:
-                type: object
-                required:
-                 - events
-                 - url
-                properties:
-                  events:
-                    type: array
-                    items:
-                      type: string
-                      
-                    description: >-
-                       A list of the webhooks that you are subscribing to. Currently "video.encoding.quality.completed" is the only option. video.encoding.quality.completed - a video encoding quality is ready for the video (for example the 720p quality hls encoding video is ready.)
-                    example: video.encoding.quality.completed
-                  url:
-                    type: string
-                    description: >-
-                      The the url to which HTTP notifications are sent. It could be any http or https URL.
-                    example: 'https://example.com/webhooks'
-                example:
-                  events: 
-                    - video.encoding.quality.completed
-                  url: "http://clientnotificationserver.com/notif?myquery=query"
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/webhooks-create-payload'
       responses:
         '201':
           description: Created
           content:
-            application/vnd.api.video+json:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/webhook'
               examples:
                 response:
                   value:
-                    webhookId: "webhook_XXXXXXXXXXXXXXX"
-                    createdAt: "2021-01-08T14:12:18.000+00:00"
-                    events: 
-                      - "video.encoding.quality.completed"
-                    url: "http://clientnotificationserver.com/notif?myquery=query"
-                    
+                    webhookId: webhook_XXXXXXXXXXXXXXX
+                    createdAt: '2021-01-08T14:12:18.000+00:00'
+                    events:
+                      - video.encoding.quality.completed
+                    url: 'http://clientnotificationserver.com/notif?myquery=query'
         '400':
           description: Bad Request
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/bad-request'
               examples:
@@ -3625,119 +3308,56 @@ paths:
                         name: events
       security:
         - bearerAuth: []
-    get:
-      security:
-        - bearerAuth: []
-      tags:
-        - Webhooks
-      summary: List all webhooks
-      description: >-
-        Requests to this endpoint return a list of your webhooks (with all their
-        details). You can filter what the webhook list that the API returns using the parameters
-        described below.
-      operationId: LIST-webhooks
-      parameters:
-        - name : events
-          in: query
-          description: >-
-            The webhook event that you wish to filter on.
-          example: video.encoding.quality.completed
-          required: false
-          schema:
-            type: string
-        - name: currentPage
-          in: query
-          description: >-
-            Choose the number of search results to return per page. Minimum
-            value: 1
-          example: 2
-          required: false
-          schema:
-            type: integer
-            default: 1
-        - name: pageSize
-          in: query
-          description: 'Results per page. Allowed values 1-100, default is 25.'
-          required: false
-          example: 30
-          schema:
-            type: integer
-            default: 25
-      responses:
-        '200':
-          description: Success
-          content:
-            application/vnd.api.video+json:
-              examples:
-                response:
-                  value:
-                    data: 
-                      - webhookId: "webhook_XXXXXXXXXXXXXXX"
-                        createdAt: "2021-01-08T14:12:18.000+00:00"
-                        events: 
-                        - "video.encoding.quality.completed"
-                        url: "http://clientnotificationserver.com/notif?myquery=query"
-                      - webhookId: "webhook_XXXXXXXXXYYYYYY"
-                        createdAt: "2021-01-12T12:12:12.000+00:00"
-                        events: 
-                        - "video.encoding.quality.completed"
-                        url: "http://clientnotificationserver.com/notif?myquery=query2"
-                    pagination:
-                      currentPage: 1
-                      pageSize: 25
-                      pagesTotal: 1
-                      itemsTotal: 11
-                      currentPageItems: 11
-                      links:
-                        - rel: self
-                          uri: 'https://ws.api.video/webhooks?currentPage=1'
-                        - rel: first
-                          uri: 'https://ws.api.video/webhooks?currentPage=1'
-                        - rel: last
-                          uri: 'https://ws.api.video/webhooks?currentPage=1'
-                          
-  /webhooks/{webhookId}:
+  '/webhooks/{webhookId}':
     get:
       tags:
         - Webhooks
       summary: Show Webhook details
       description: >-
-        This call provides the same JSON information provided on Webjhook creation.
+        This call provides the same JSON information provided on Webjhook
+        creation.
       operationId: GET-Webhook
+      x-client-action: get
       parameters:
         - name: webhookId
-          description: The unique webhook you wish to retreive details on.
           in: path
+          description: The unique webhook you wish to retreive details on.
           required: true
+          style: simple
+          explode: false
           schema:
             type: string
       responses:
         '200':
           description: Success
           content:
-            application/vnd.api.video+json:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/webhook'
               examples:
                 response:
                   value:
-                    webhookId: "webhook_XXXXXXXXXXXXXXX"
-                    createdAt: "2021-01-08T14:12:18.000+00:00"
-                    events: 
-                      - "video.encoding.quality.completed"
-                    url: "http://clientnotificationserver.com/notif?myquery=query"
+                    webhookId: webhook_XXXXXXXXXXXXXXX
+                    createdAt: '2021-01-08T14:12:18.000+00:00'
+                    events:
+                      - video.encoding.quality.completed
+                    url: 'http://clientnotificationserver.com/notif?myquery=query'
       security:
         - bearerAuth: []
     delete:
       tags:
         - Webhooks
       summary: Delete a Webhook
-      description: >-
-        This endpoint will delete the indicated webhook.
+      description: This endpoint will delete the indicated webhook.
       operationId: DELETE-webhook
+      x-client-action: delete
       parameters:
         - name: webhookId
-          description: The webhook you wish to delete.
           in: path
+          description: The webhook you wish to delete.
           required: true
+          style: simple
+          explode: false
           schema:
             type: string
       responses:
@@ -3746,7 +3366,7 @@ paths:
         '404':
           description: Not Found
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/not-found'
               examples:
@@ -3767,51 +3387,15 @@ paths:
         Deprecated. Authenticate and get a token, then you can use the bearer
         token here to retrieve details about your account.
       operationId: GET_account
+      deprecated: true
+      x-client-action: get
       responses:
         '200':
           description: Success
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
-                type: object
-                properties:
-                  quota:
-                    type: object
-                    description: Deprecated
-                    properties:
-                      quotaUsed:
-                        type: number
-                        description: Deprecated
-                      quotaRemaining:
-                        type: number
-                        description: Deprecated
-                      quotaTotal:
-                        type: number
-                        description: Deprecated
-                  features:
-                    type: array
-                    description: >-
-                      Deprecated. What features are enabled for your account.
-                      Choices include: app.dynamic_metadata - the ability to
-                      dynamically tag videos to better segment and understand
-                      your audiences, app.event_log - the ability to create and
-                      retrieve a log detailing how your videos were interacted
-                      with, player.white_label - the ability to customise your
-                      player, stats.player_events - the ability to see
-                      statistics about how your player is being used,
-                      transcode.mp4_support - the ability to reformat content
-                      into mp4 using the H264 codec.
-                    example: '["app.dynamic_metadata, app.event_log"]'
-                    items:
-                      type: string
-                  environment:
-                    type: string
-                    description: >-
-                      Deprecated. Whether you are using your production or
-                      sandbox API key will impact what environment is displayed
-                      here, as well as stats and features information. If you
-                      use your sandbox key, the environment is "sandbox." If you
-                      use your production key, the environment is "production."
+                $ref: '#/components/schemas/account'
               examples:
                 response:
                   value:
@@ -3829,7 +3413,7 @@ paths:
         '404':
           description: Not Found
           content:
-            application/vnd.api.video+json:
+            application/json:
               schema:
                 $ref: '#/components/schemas/not-found'
               examples:
@@ -3841,366 +3425,43 @@ paths:
                     status: 404
       security:
         - bearerAuth: []
-servers:
-  - url: 'https://ws.api.video'
+x-client-base-paths:
+  production: 'https://ws.api.video'
+  sandbox: 'https://sandbox.api.video'
 components:
   parameters:
-    trait_paginatedListVideo_sortBy:
-      name: sortBy
-      in: query
-      description: >-
-        Allowed: publishedAt, title. Sort by when a video was published, using
-        the time in ISO-8601 format, or by title. Use sortOrder to choose the
-        order in which these are sorted.
-      example: publishedAt
-      required: false
-      schema:
-        type: string
-    trait_paginatedListVideo_sortOrder:
-      name: sortOrder
-      in: query
-      description: >-
-        Allowed: asc, desc. Ascending for date and time means that earlier
-        values precede later ones. Descending means that later values preced
-        earlier ones. For title, it is 0-9 and A-Z ascending and Z-A, 9-0
-        descending.
-      example: desc
-      required: false
-      schema:
-        type: string
-    trait_paginatedListVideosStats_currentPage:
-      name: currentPage
-      description: The number of the page you want to view.
-      example: 3
-      in: query
-      required: false
-      schema:
-        type: integer
-    trait_paginatedListVideosStats_pageSize:
-      name: pageSize
-      description: >-
-        How many items will be returned per page. If you do not have enough
-        items for a page, there will be less items than the requested page size.
-      example: 30
-      in: query
-      required: false
-      schema:
-        type: integer
-    trait_paginatedListVideosStats_sortBy:
-      name: sortBy
-      in: query
-      description: >-
-        Allowed: emitted_at, title. Sort by when an event occurred, an event is
-        something that happens during a session like ready, play, pause, resume,
-        seek.backward, seek.forward, or end. The date-time format for an event
-        occurrence is ISO-8601. You can also sort by title. Use the sortOrder
-        parameter to choose the order in which information is returned.
-      required: false
-      schema:
-        type: string
-    trait_paginatedListVideosStats_sortOrder:
-      name: sortOrder
-      in: query
-      description: >-
-        Allowed: asc, desc. Ascending for date and time means that earlier
-        values precede later ones. Descending means that later values preced
-        earlier ones. For title, it is 0-9 and A-Z ascending and Z-A, 9-0
-        descending.
-      example: asc
-      required: false
-      schema:
-        type: string
-    trait_paginatedListVideosStats_tags:
-      name: tags
-      description: Tags can be used to categorise the video.
-      example: '["maths", "string theory", "video"]'
-      in: query
-      required: false
-      explode: true
-      schema:
-        type: array
-        items:
-          type: string
-    trait_paginatedListVideosStats_metadata:
-      name: metadata
-      in: query
-      description: Metadata and Dynamic Metadata filter.
-      example: >-
-        [{"key": "Author", "value": "John Doe"}, {"key": "Format", "value":
-        "Tutorial"}]
-      required: false
-      explode: true
-      schema:
-        type: array
-        items:
-          type: string
-    trait_paginatedListLivesStats_currentPage:
-      name: currentPage
-      description: The number for the page you are currently viewing.
-      example: 4
-      in: query
-      required: false
-      schema:
-        type: integer
-    trait_paginatedListLivesStats_pageSize:
-      name: pageSize
-      description: >-
-        The number of items you want to display per page. If there are less
-        items than the page size, the page will be only partially full.
-      example: 30
-      in: query
-      required: false
-      schema:
-        type: integer
-    trait_paginatedListLivesStats_sortBy:
-      name: sortBy
-      in: query
-      description: >-
-        Allowed: emitted_at, title. Allowed: emitted_at, title. Sort by when an
-        event occurred, an event is something that happens during a session like
-        ready, play, pause, resume, seek.backward, seek.forward, or end. The
-        date-time format for an event occurrence is ISO-8601. You can also sort
-        by title. Use the sortOrder parameter to choose the order in which
-        information is returned.
-      required: false
-      schema:
-        type: string
-    trait_paginatedListLivesStats_sortOrder:
-      name: sortOrder
-      in: query
-      description: >-
-        Allowed: asc, desc. Ascending for date and time means that earlier
-        values precede later ones. Descending means that later values preced
-        earlier ones. For title, it is 0-9 and A-Z ascending and Z-A, 9-0
-        descending.
-      example: desc
-      required: false
-      schema:
-        type: string
-    trait_paginatedListSessionEventsStats_currentPage:
-      name: currentPage
-      description: The number for the page you are currently on.
-      example: 3
-      in: query
-      required: false
-      schema:
-        type: integer
-    trait_paginatedListSessionEventsStats_pageSize:
-      name: pageSize
-      description: >-
-        The number of items returned per page. If there are not enough items for
-        a page, the page will be partially filled.
-      example: 30
-      in: query
-      required: false
-      schema:
-        type: integer
-    trait_paginatedListSessionEventsStats_sortBy:
-      name: sortBy
-      in: query
-      description: >-
-        Allowed: emitted_at, title. Allowed: emitted_at, title. Sort by when an
-        event occurred, an event is something that happens during a session like
-        ready, play, pause, resume, seek.backward, seek.forward, or end. The
-        date-time format for an event occurrence is ISO-8601. You can also sort
-        by title. Use the sortOrder parameter to choose the order in which
-        information is returned.
-      example: My Movie
-      required: false
-      schema:
-        type: string
-    trait_paginatedListSessionEventsStats_sortOrder:
-      name: sortOrder
-      in: query
-      description: >-
-        Allowed: asc, desc. Ascending for date and time means that earlier
-        values precede later ones. Descending means that later values preced
-        earlier ones. For title, it is 0-9 and A-Z ascending and Z-A, 9-0
-        descending.
-      example: asc
-      required: false
-      schema:
-        type: string
-    trait_paginatedListSessionEventsStats_tags:
-      name: tags
-      in: query
-      required: false
-      explode: true
-      schema:
-        type: array
-        items:
-          type: string
-    trait_paginatedListSessionEventsStats_metadata:
-      name: metadata
-      in: query
-      description: Metadata and Dynamic Metadata filter.
-      required: false
-      explode: true
-      schema:
-        type: array
-        items:
-          type: string
-    trait_pageQueryTrait_currentPage:
+    currentPage:
       name: currentPage
       in: query
-      description: Number of the page to display
+      description: 'Choose the number of search results to return per page. Minimum value: 1'
       required: false
+      style: form
+      explode: true
       schema:
         type: integer
-        minimum: 1
         default: 1
-    trait_pageQueryTrait_pageSize:
+      example: 2
+    pageSize:
       name: pageSize
       in: query
-      description: >-
-        Expected number of items to display on the page. Might be lower on the
-        last page
+      description: 'Results per page. Allowed values 1-100, default is 25.'
       required: false
+      style: form
+      explode: true
       schema:
         type: integer
-        minimum: 1
-        maximum: 100
         default: 25
-  responses:
-    trait_paginatedListVideo_200:
-      description: ''
-      content:
-        application/vnd.api.video+json:
-          schema:
-            type: object
-            required:
-              - data
-              - pagination
-            properties:
-              data:
-                type: array
-                items:
-                  type: object
-                  properties: {}
-              pagination:
-                $ref: '#/components/schemas/pagination'
-    trait_paginatedListPlayer_200:
-      description: ''
-      content:
-        application/vnd.api.video+json:
-          schema:
-            type: object
-            required:
-              - data
-              - pagination
-            properties:
-              data:
-                type: array
-                items:
-                  type: object
-                  properties: {}
-              pagination:
-                $ref: '#/components/schemas/pagination'
-    trait_paginatedListVideosStats_200:
-      description: ''
-      content:
-        application/vnd.api.video+json:
-          schema:
-            type: object
-            required:
-              - data
-              - pagination
-            properties:
-              data:
-                type: array
-                items:
-                  $ref: '#/components/schemas/video-session'
-              pagination:
-                $ref: '#/components/schemas/pagination'
-              period:
-                type: string
-                format: date
-    trait_paginatedListLivesStats_200:
-      description: ''
-      content:
-        application/vnd.api.video+json:
-          schema:
-            type: object
-            required:
-              - data
-              - pagination
-            properties:
-              data:
-                type: array
-                items:
-                  $ref: '#/components/schemas/live-stream-session'
-              pagination:
-                $ref: '#/components/schemas/pagination'
-              period:
-                type: string
-                format: date
-    trait_paginatedListSessionEventsStats_200:
-      description: ''
-      content:
-        application/vnd.api.video+json:
-          schema:
-            type: object
-            required:
-              - data
-              - pagination
-            properties:
-              data:
-                type: array
-                items:
-                  $ref: '#/components/schemas/video-session'
-              pagination:
-                $ref: '#/components/schemas/pagination'
-              period:
-                type: string
-                format: date
-  requestBodies:
-    playerinput:
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/playerinput'
-    POST_videos-videoId-thumbnail:
-      content:
-        multipart/form-data:
-          schema:
-            type: object
-            properties:
-              file:
-                description: The image to be added as a thumbnail.
-                type: string
-            required:
-              - file
-  securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
+      example: 30
   schemas:
-    video:
-      title: Video
-      allOf:
-        - $ref: '#/components/schemas/videooutput'
-        - {}
-      example:
-        videoId: vi4k0jvEUuaTdRAEjQ4Jfrgz
-        title: Maths video
-        description: An amazing video explaining the string theory
-        tags:
-          - maths
-          - string theory
-          - video
-        metadata:
-          - key: Author
-            value: John Doe
-          - key: Format
-            value: Tutorial
-        scheduledAt: '4251-03-03T12:52:03.085Z'
-        publishedAt: '4665-07-14T23:36:18.598Z'
-        actions:
-          - video_delete
-          - video_download
-          - video_update
+    link:
+      type: object
+      properties:
+        rel:
+          type: string
+        uri:
+          type: string
     access-token:
+      title: AccessToken
       type: object
       properties:
         access_token:
@@ -4212,8 +3473,8 @@ components:
             eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiIsImp0aSI6IjUyZWM4NWUyMjFkODZjOWI0NDQ5NzBhMjQwMzUyOWQ4MDQyNGQ3ZmJjYjFlYWM2MjVlM2VkMjI2YWRlNTcxMDY2NDUyZDc0NjdhN2E4NjI0In0.eyJhdWQiOiJsaWJjYXN0IiwianRpIjoiNTJlYzg1ZTIyMWQ4NmM5YjQ0NDk3MGEyNDAzNTI5ZDgwNDI0ZDdmYmNiMWVhYzYyNWUzZWQyMjZhZGU1NzEwNjY0NTJkNzQ2N2E3YTg2MjQiLCJpYXQiOjE1MjUyNzYxNDcsIm5iZiI6MTUyNTI3NjE0NywiZXhwIjoxNTI1Mjc5NzQ3LCJzdWIiOiJ1c01vbml0b3IiLCJzY29wZXMiOlsibW9uaXRvci5saWJjYXN0LmNvbSJdLCJjb250ZXh0Ijp7InVzZXIiOiJ1c01vbml0b3IiLCJwcm9qZWN0IjoicHJNb25pdG9yIiwibWVtYmVyIjoibWVNb25pdG9yIn19.rUvishDNyJLNlI4W5VmguNecm5KD2uZgPkKJQbaqw-cJbSrVxkSbiKYtk_E3cz3WT7-IS2yFTsYN3uIo5Rbit8_HftweyEp2bdBRI8yjR6oZZ1sNJJXswISN1i2kk4r-aaxu7Xxf_LtsjOMUj_YZsvcc2nqBXPKjHbJCJryx3DDJaIcymOqao7nhQaCCQyrQooAXNTYs4E9fWN1dC_x2O-zok5TuG-xhEW-umwxfSUMWNgSTkz38ACceQ0PCJSgB3jqjDH4MwC7B3ppEPZuK5E6JhKeyRlalswRyYq3UQPnVeMTam7YQHsuTgbehF6WySW8i44o7V_MCe9hjPdp-WA
         token_type:
           type: string
-          default: bearer
           description: The type of token you have.
+          default: bearer
         refresh_token:
           type: string
           description: >-
@@ -4226,16 +3487,16 @@ components:
           description: >-
             Lists the time in seconds when your access token expires. It lasts
             for one hour.
-      title: AccessToken
       example:
         access_token: est
         token_type: qui nulla l
         refresh_token: cillum
         expires_in: 3600
     pagination:
-      type: object
+      title: Pagination
       required:
         - links
+      type: object
       properties:
         itemsTotal:
           type: integer
@@ -4260,18 +3521,7 @@ components:
         links:
           type: array
           items:
-            type: object
-            properties:
-              '':
-                type: object
-                properties:
-                  rel:
-                    type: string
-                    pattern: ^self$
-                  uri:
-                    type: string
-                    format: uri
-      title: Pagination
+            $ref: '#/components/schemas/pagination_link'
       example:
         itemsTotal: 123
         pagesTotal: 7
@@ -4292,6 +3542,7 @@ components:
             rel: last
             uri: /videos/search?currentPage=6&pageSize=20
     bad-request:
+      title: BadRequest
       type: object
       properties:
         type:
@@ -4303,12 +3554,12 @@ components:
         status:
           type: integer
         problems:
-          type: array
           uniqueItems: true
+          type: array
           items:
             $ref: '#/components/schemas/bad-request'
-      title: BadRequest
     not-found:
+      title: NotFound
       type: object
       properties:
         type:
@@ -4319,8 +3570,8 @@ components:
           type: string
         status:
           type: integer
-      title: NotFound
-    videooutput:
+    video:
+      title: video
       type: object
       properties:
         videoId:
@@ -4345,10 +3596,10 @@ components:
           example: '2019-12-16T08:25:51+00:00'
         updatedAt:
           type: string
-          format: date-time
           description: >-
             The date and time the video was updated. Date and time are provided
             using ISO-8601 UTC format.
+          format: date-time
           example: '2019-12-16T08:25:51+00:10'
         tags:
           type: array
@@ -4363,78 +3614,15 @@ components:
             Metadata you can use to categorise and filter videos. Metadata is a
             list of dictionaries, where each dictionary represents a key value
             pair for categorising a video. 
-          items: {}
           example: >-
             [{"key":"Author", "value":"John Doe"}, {"key":"Format",
             "value":"Tutorial"}]
+          items:
+            $ref: '#/components/schemas/metadata'
         source:
-          type: object
-          description: Source information about the video.
-          properties:
-            uri:
-              type: string
-              description: The URL where the video is stored.
-              example: /videos/vi4k0jvEUuaTdRAEjQ4Prklg/source
-            type:
-              type: string
-            liveStream:
-              type: object
-              description: This appears if the video is from a Live Record.
-              properties:
-                liveStreamId:
-                  type: string
-                  description: The unique identifier for the live stream.
-                  example: li400mYKSgQ6xs7taUeSaEKr
-                links:
-                  type: array
-                  items:
-                    type: object
-                    properties:
-                      rel:
-                        type: string
-                      uri:
-                        type: string
+          $ref: '#/components/schemas/videoSource'
         assets:
-          type: object
-          description: >-
-            Collection of details about the video object that you can use to
-            work with the video object.
-          properties:
-            hls:
-              type: string
-              format: uri
-              description: >-
-                This is the manifest URL. For HTTP Live Streaming (HLS), when a
-                HLS video stream is initiated, the first file to download is the
-                manifest. This file has the extension M3U8, and provides the
-                video player with information about the various bitrates
-                available for streaming.
-            iframe:
-              type: string
-              description: Code to use video from a third party website
-              example: >-
-                <iframe
-                src="//embed.api.video/c188ed58-3403-46a2-b91b-44603d10b2c9?token=831a9bd9-9f50-464c-a369-8e9d914371ae"
-                width="100%" height="100%" frameborder="0" scrolling="no"
-                allowfullscreen=""></iframe>
-            player:
-              type: string
-              format: uri
-              description: Raw url of the player.
-              example: >-
-                https://embed.api.video/1b9d6ae8-8f57-4b6d-8552-d636926b4f5f?token=831a9bd9-9f50-464c-a369-8e9d914371ae
-            thumbnail:
-              type: string
-              format: uri
-              description: Poster of the video.
-              example: >-
-                https://cdn.api.video/stream/831a9bd9-9f50-464c-a369-8e9d914371ae/thumbnail.jpg
-            mp4:
-              type: string
-              format: uri
-              description: Available only if mp4Support is enabled. Raw mp4 url.
-              example: >-
-                https://cdn.api.video/vod/vi4k0jvEUuaTdRAEjQ4Jfrgz/token/8fd70443-d9f0-45d2-b01c-12c8cfc707c9/mp4/720/source.mp4
+          $ref: '#/components/schemas/videoAssets'
         playerId:
           type: string
           description: |
@@ -4457,165 +3645,139 @@ components:
             This lets you know whether mp4 is supported. If enabled, an mp4 URL
             will be provided in the response for the video.
           example: true
-      title: VideoOutput
-    player:
-      type: object
-      properties:
-        playerId:
-          type: string
-          example: pl45KFKdlddgk654dspkze
-        createdAt:
-          type: string
-          format: date-time
-          description: 'When the player was created, presented in ISO-8601 format.'
-          example: '2020-01-31T10:17:47+00:00'
-        updatedAt:
-          type: string
-          format: date-time
-          description: 'When the player was last updated, presented in ISO-8601 format.'
-          example: '2020-01-31T10:18:47+00:00'
-        shapeMargin:
-          type: integer
-          description: Deprecated
-        shapeRadius:
-          type: integer
-          description: Deprecated
-        shapeAspect:
-          type: string
-          description: Deprecated
-        shapeBackgroundTop:
-          type: string
-          description: Deprecated
-        shapeBackgroundBottom:
-          type: string
-          description: Deprecated
-        text:
-          type: string
-          description: 'RGBA color for timer text. Default: rgba(255, 255, 255, 1)'
-        link:
-          type: string
-          description: 'RGBA color for all controls. Default: rgba(255, 255, 255, 1)'
-        linkHover:
-          type: string
-          description: >-
-            RGBA color for all controls when hovered. Default: rgba(255, 255,
-            255, 1)
-        linkActive:
-          type: string
-          description: Deprecated
-        trackPlayed:
-          type: string
-          description: >-
-            RGBA color playback bar: played content. Default: rgba(88, 131, 255,
-            .95)
-        trackUnplayed:
-          type: string
-          description: >-
-            RGBA color playback bar: downloaded but unplayed (buffered) content.
-            Default: rgba(255, 255, 255, .35)
-        trackBackground:
-          type: string
-          description: >-
-            RGBA color playback bar: background. Default: rgba(255, 255, 255,
-            .2)
-        backgroundTop:
-          type: string
-          description: 'RGBA color: top 50% of background. Default: rgba(0, 0, 0, .7)'
-        backgroundBottom:
-          type: string
-          description: 'RGBA color: bottom 50% of background. Default: rgba(0, 0, 0, .7)'
-        backgroundText:
-          type: string
-          description: 'RGBA color for title text. Default: rgba(255, 255, 255, 1)'
-        enableApi:
-          type: boolean
-          description: 'enable/disable player SDK access. Default: true'
-        enableControls:
-          type: boolean
-          description: 'enable/disable player controls. Default: true'
-        forceAutoplay:
-          type: boolean
-          description: 'enable/disable player autoplay. Default: false'
-        hideTitle:
-          type: boolean
-          description: 'enable/disable title. Default: false'
-        forceLoop:
-          type: boolean
-          description: 'enable/disable looping. Default: false'
-          default: false
-        assets:
-          type: object
-          properties:
-            logo:
-              type: string
-              description: The name of the file containing the logo you want to use.
-              example: mylogo.jpg
-            link:
-              type: string
-              description: The path to the file containing your logo.
-              example: path/to/my/logo/mylogo.jpg
-      title: Player
-    playerinput:
-      type: object
-      properties:
-        text:
-          type: string
-          description: 'RGBA color for timer text. Default: rgba(255, 255, 255, 1)'
-        link:
-          type: string
-          description: 'RGBA color for all controls. Default: rgba(255, 255, 255, 1)'
-        linkHover:
-          type: string
-          description: >-
-            RGBA color for all controls when hovered. Default: rgba(255, 255,
-            255, 1)
-        trackPlayed:
-          type: string
-          description: >-
-            RGBA color playback bar: played content. Default: rgba(88, 131, 255,
-            .95)
-        trackUnplayed:
-          type: string
-          description: >-
-            RGBA color playback bar: downloaded but unplayed (buffered) content.
-            Default: rgba(255, 255, 255, .35)
-        trackBackground:
-          type: string
-          description: >-
-            RGBA color playback bar: background. Default: rgba(255, 255, 255,
-            .2)
-        backgroundTop:
-          type: string
-          description: 'RGBA color: top 50% of background. Default: rgba(0, 0, 0, .7)'
-        backgroundBottom:
-          type: string
-          description: 'RGBA color: bottom 50% of background. Default: rgba(0, 0, 0, .7)'
-        backgroundText:
-          type: string
-          description: 'RGBA color for title text. Default: rgba(255, 255, 255, 1)'
-        enableApi:
-          type: boolean
-          description: 'enable/disable player SDK access. Default: true'
-          default: true
-        enableControls:
-          type: boolean
-          description: 'enable/disable player controls. Default: true'
-          default: true
-        forceAutoplay:
-          type: boolean
-          description: 'enable/disable player autoplay. Default: false'
-          default: false
-        hideTitle:
-          type: boolean
-          description: 'enable/disable title. Default: false'
-          default: false
-        forceLoop:
-          type: boolean
-          description: 'enable/disable looping. Default: false'
-          default: false
-      title: PlayerInput
       example:
-        playerId: pl14Db6oMJRH6SRVoOwORacK
+        videoId: vi4k0jvEUuaTdRAEjQ4Jfrgz
+        title: Maths video
+        description: An amazing video explaining the string theory
+        tags:
+          - maths
+          - string theory
+          - video
+        metadata:
+          - key: Author
+            value: John Doe
+          - key: Format
+            value: Tutorial
+        scheduledAt: '4251-03-03T12:52:03.085Z'
+        publishedAt: '4665-07-14T23:36:18.598Z'
+        actions:
+          - video_delete
+          - video_download
+          - video_update
+    player:
+      allOf:
+        - $ref: '#/components/schemas/playerinput'
+        - type: object
+          properties:
+            playerId:
+              type: string
+              example: pl45KFKdlddgk654dspkze
+            createdAt:
+              type: string
+              description: 'When the player was created, presented in ISO-8601 format.'
+              format: date-time
+              example: '2020-01-31T10:17:47+00:00'
+            updatedAt:
+              type: string
+              description: 'When the player was last updated, presented in ISO-8601 format.'
+              format: date-time
+              example: '2020-01-31T10:18:47+00:00'
+            shapeMargin:
+              type: integer
+              description: Deprecated
+            shapeRadius:
+              type: integer
+              description: Deprecated
+            shapeAspect:
+              type: string
+              description: Deprecated
+            shapeBackgroundTop:
+              type: string
+              description: Deprecated
+            shapeBackgroundBottom:
+              type: string
+              description: Deprecated
+            linkActive:
+              type: string
+              description: Deprecated
+            assets:
+              type: object
+              properties:
+                logo:
+                  type: string
+                  description: The name of the file containing the logo you want to use.
+                  example: mylogo.jpg
+                link:
+                  type: string
+                  description: The path to the file containing your logo.
+                  example: path/to/my/logo/mylogo.jpg
+      title: Player
+    playerCreationPayload:
+      allOf:
+        - $ref: '#/components/schemas/playerinput'
+    playerUpdatePayload:
+      allOf:
+        - $ref: '#/components/schemas/playerinput'
+    playerinput:
+      title: PlayerInput
+      type: object
+      properties:
+        text:
+          type: string
+          description: 'RGBA color for timer text. Default: rgba(255, 255, 255, 1)'
+        link:
+          type: string
+          description: 'RGBA color for all controls. Default: rgba(255, 255, 255, 1)'
+        linkHover:
+          type: string
+          description: >-
+            RGBA color for all controls when hovered. Default: rgba(255, 255,
+            255, 1)
+        trackPlayed:
+          type: string
+          description: >-
+            RGBA color playback bar: played content. Default: rgba(88, 131, 255,
+            .95)
+        trackUnplayed:
+          type: string
+          description: >-
+            RGBA color playback bar: downloaded but unplayed (buffered) content.
+            Default: rgba(255, 255, 255, .35)
+        trackBackground:
+          type: string
+          description: >-
+            RGBA color playback bar: background. Default: rgba(255, 255, 255,
+            .2)
+        backgroundTop:
+          type: string
+          description: 'RGBA color: top 50% of background. Default: rgba(0, 0, 0, .7)'
+        backgroundBottom:
+          type: string
+          description: 'RGBA color: bottom 50% of background. Default: rgba(0, 0, 0, .7)'
+        backgroundText:
+          type: string
+          description: 'RGBA color for title text. Default: rgba(255, 255, 255, 1)'
+        enableApi:
+          type: boolean
+          description: 'enable/disable player SDK access. Default: true'
+          default: true
+        enableControls:
+          type: boolean
+          description: 'enable/disable player controls. Default: true'
+          default: true
+        forceAutoplay:
+          type: boolean
+          description: 'enable/disable player autoplay. Default: false'
+          default: false
+        hideTitle:
+          type: boolean
+          description: 'enable/disable title. Default: false'
+          default: false
+        forceLoop:
+          type: boolean
+          description: 'enable/disable looping. Default: false'
+          default: false
+      example:
         assets:
           logo: 'https://cdn.api.video/player/pl14Db6oMJRH6SRVoOwORacK/logo.png'
           link: 'https://api.video'
@@ -4641,6 +3803,7 @@ components:
         hideTitle: false
         forceLoop: false
     subtitle:
+      title: Subtitle
       type: object
       properties:
         uri:
@@ -4651,118 +3814,27 @@ components:
           type: string
         default:
           type: boolean
-          default: false
           description: >-
             Whether you will have subtitles or not. True for yes you will have
             subtitles, false for no you will not have subtitles.
           example: false
-      title: Subtitle
+          default: false
     video-session:
+      title: Video Session
       type: object
       properties:
         session:
-          type: object
-          properties:
-            sessionId:
-              type: string
-              description: >-
-                The unique identifier for the session that you can use to track
-                what happens during it.
-              example: psEmFwGQUAXR2lFHj5nDOpy
-            loadedAt:
-              type: string
-              format: date-time
-              description: 'When the video session started, presented in ISO-8601 format.'
-              example: '2019-06-24T11:45:01.109+00'
-            endedAt:
-              type: string
-              format: date-time
-              description: 'When the video session ended, presented in ISO-8601 format.'
-              example: '2019-06-24T12:45:01.109+00'
+          $ref: '#/components/schemas/video_session_session'
         location:
-          type: object
-          description: The location of the viewer.
-          properties:
-            country:
-              type: string
-              description: The country of the viewer.
-              example: France
-            city:
-              type: string
-              description: The city of the viewer.
-              example: Paris
+          $ref: '#/components/schemas/video_session_location'
         referrer:
-          type: object
-          properties:
-            url:
-              type: string
-              description: The link the viewer used to reach the video session.
-              example: 'https://api.video'
-            medium:
-              type: string
-              description: >-
-                How they arrived at the site, for example organic or paid.
-                Organic meaning they found it themselves and paid meaning they
-                followed a link from an advertisement.
-              example: organic
-            source:
-              type: string
-              description: >-
-                The source the referrer came from to the video session. For
-                example if they searched through google to find the stream.
-              example: 'https://google.com'
-            searchTerm:
-              type: string
-              description: The search term they typed to arrive at the video session.
+          $ref: '#/components/schemas/video_session_referrer'
         device:
-          type: object
-          description: What type of device the user is on when in the video session.
-          properties:
-            type:
-              type: string
-              description: 'What the type is like desktop, laptop, mobile.'
-              example: desktop
-            vendor:
-              type: string
-              description: >-
-                If known, what the brand of the device is, like Apple, Dell,
-                etc.
-              example: Dell
-            model:
-              type: string
-              description: 'The specific model of the device, if known.'
-              example: unknown
+          $ref: '#/components/schemas/video_session_device'
         os:
-          type: object
-          description: The operating system the viewer is on.
-          properties:
-            name:
-              type: string
-              description: The name of the operating system.
-              example: Microsoft Windows
-            shortname:
-              type: string
-              description: >-
-                The nickname for the operating system, often representing the
-                version.
-              example: W10
-            version:
-              type: string
-              description: The version of the operating system.
-              example: Windows 10
+          $ref: '#/components/schemas/video_session_os'
         client:
-          type: object
-          description: What kind of browser the viewer is using for the video session.
-          properties:
-            name:
-              type: string
-              description: The name of the browser used to view the video session.
-              example: Firefox
-            version:
-              type: string
-              description: The version of the browser used to view the video session.
-              example: '67.0'
-      title: Video Session
+          $ref: '#/components/schemas/video_session_client'
       example:
         session:
           sessionId: psEmFwGQUAXR2lFHj5nDOpy
@@ -4789,12 +3861,14 @@ components:
           name: Firefox
           version: '67.0'
     live-stream:
+      title: LiveStream
       type: object
       properties:
         liveStreamId:
           type: string
           description: >-
-            The unique identifier for the live stream. 
+            The unique identifier for the live stream. Live stream IDs begin
+            with "li."
           example: li400mYKSgQ6xs7taUeSaEKr
         name:
           type: string
@@ -4808,36 +3882,19 @@ components:
           type: boolean
           description: Whether you are recording or not.
           example: true
+        public:
+          type: boolean
+          description: >-
+            BETA FEATURE Please limit all public = false ("private") livestreams
+            to 3,000 users. Whether your video can be viewed by everyone, or
+            requires authentication to see it. A setting of false will require a
+            unique token for each view.
+          example: true
         assets:
-          type: object
-          properties:
-            hls:
-              type: string
-              format: uri
-              description: The http live streaming (HLS) link for your live video stream.
-              example: 'https://live.api.video/li4pqNqGUkhKfWcBGpZVLRY5.m3u8'
-            iframe:
-              type: string
-              description: The embed code for the iframe containing your live video stream.
-              example: >-
-                <iframe
-                src=\"https://embed.api.video/live/li4pqNqGUkhKfWcBGpZVLRY5\"
-                width=\"100%\" height=\"100%\" frameborder=\"0\"
-                scrolling=\"no\" allowfullscreen=\"\"></iframe>
-            player:
-              type: string
-              format: uri
-              description: A link to the video player that is playing your live stream.
-              example: 'https://embed.api.video/live/li400mYKSgQ6xs7taUeSaEKr'
-            thumbnail:
-              type: string
-              format: uri
-              description: A link to the thumbnail for your video.
-              example: >-
-                https://cdn.api.video/live/li400mYKSgQ6xs7taUeSaEKr/thumbnail.jpg
+          $ref: '#/components/schemas/live_stream_assets'
         playerId:
           type: string
-          description: 'The unique identifier for the player.'
+          description: The unique identifier for the player.
           example: pl45d5vFFGrfdsdsd156dGhh
         broadcasting:
           type: boolean
@@ -4846,122 +3903,24 @@ components:
             others to see. True means you are broadcasting to viewers, false
             means you are not.
           example: true
-      title: LiveStream
     live-stream-session:
+      title: Live Stream Session
       type: object
       properties:
         session:
-          type: object
-          properties:
-            sessionId:
-              type: string
-              description: >-
-                A unique identifier for your session. You can use this to track
-                what happens during a specific session.
-            loadedAt:
-              type: string
-              format: date-time
-              description: >-
-                When the session started, with the date and time presented in
-                ISO-8601 format.
-              example: '2019-06-24T11:45:01.109+00'
-            endedAt:
-              type: string
-              format: date-time
-              description: >-
-                When the session ended, with the date and time presented in
-                ISO-8601 format.
-              example: '2019-06-24T12:45:01.109+00'
+          $ref: '#/components/schemas/live_stream_session_session'
         location:
-          type: object
-          description: The location of the viewer of the live stream.
-          properties:
-            country:
-              type: string
-              description: The country of the viewer of the live stream.
-              example: France
-            city:
-              type: string
-              description: The city of the viewer of the live stream.
-              example: Paris
+          $ref: '#/components/schemas/live_stream_session_location'
         referrer:
-          type: object
-          properties:
-            url:
-              type: string
-              description: >-
-                The website the viewer of the live stream was referred to in
-                order to view the live stream.
-              example: 'https://api.video'
-            medium:
-              type: string
-              description: >-
-                The type of search that brought the viewer to the live stream.
-                Organic would be they found it on their own, paid would be they
-                found it via an advertisement.
-              example: organic
-            source:
-              type: string
-              description: >-
-                Where the viewer came from to see the live stream (usually where
-                they searched from).
-              example: 'https://google.com'
-            searchTerm:
-              type: string
-              description: What term they searched for that led them to the live stream.
-              example: video stream
+          $ref: '#/components/schemas/live_stream_session_referrer'
         device:
-          type: object
-          description: What type of device the user is on when in the live stream session.
-          properties:
-            type:
-              type: string
-              description: 'What the type is like desktop, laptop, mobile.'
-              example: desktop
-            vendor:
-              type: string
-              description: >-
-                If known, what the brand of the device is, like Apple, Dell,
-                etc.
-              example: Dell
-            model:
-              type: string
-              description: 'The specific model of the device, if known.'
-              example: unknown
+          $ref: '#/components/schemas/live_stream_session_device'
         os:
-          type: object
-          description: The operating system the viewer is on.
-          properties:
-            name:
-              type: string
-              description: The name of the operating system.
-              example: Microsoft Windows
-            shortname:
-              type: string
-              description: >-
-                The nickname for the operating system, often representing the
-                version.
-              example: W10
-            version:
-              type: string
-              description: The version of the operating system.
-              example: Windows 10
+          $ref: '#/components/schemas/video_session_os'
         client:
-          type: object
-          description: >-
-            What kind of browser the viewer is using for the live stream
-            session.
-          properties:
-            name:
-              type: string
-              description: The name of the browser used to view the live stream session.
-              example: Firefox
-            version:
-              type: string
-              description: The version of the browser used to view the live stream session.
-              example: '67.0'
-      title: Live Stream Session
+          $ref: '#/components/schemas/live_stream_session_client'
     player-session-event:
+      title: Player Session Event
       type: object
       properties:
         type:
@@ -4972,8 +3931,8 @@ components:
           example: play
         emittedAt:
           type: string
-          format: date-time
           description: 'When an event occurred, presented in ISO-8601 format.'
+          format: date-time
           example: '2019-06-24T11:45:01.109+00'
         at:
           type: integer
@@ -4981,94 +3940,37 @@ components:
           type: integer
         to:
           type: integer
-      title: Player Session Event
+    webhook:
+      title: Webhook
+      type: object
+      properties:
+        webhookId:
+          type: string
+          description: Unique identifier of the webhook
+          example: webhook_XXXXXXXXXXXXXXX
+        createdAt:
+          type: string
+          format: date-time
+          description: 'When an webhook was created, presented in ISO-8601 format.'
+          example: '2019-06-24T11:45:01.109+00'
+        events:
+          type: array
+          description: A list of events that will trigger the webhook.
+          example: '["video.encoding.quality.completed"]'
+          items:
+            type: string
+        url:
+          type: string
+          description: URL of the webhook
+          example: 'http://clientnotificationserver.com/notif?myquery=query'
     videostatus:
+      title: VideoStatus
       type: object
       properties:
         ingest:
-          type: object
-          description: >-
-            Details about the capturing, transferring, and storing of your video
-            for use immediately or in the future.
-          properties:
-            status:
-              description: >-
-                There are three possible ingest statuses. missing - you are
-                missing information required to ingest the video. uploading -
-                the video is in the process of being uploaded. uploaded - the
-                video is ready for use.
-              example: uploaded
-              type: string
-              enum:
-                - missing
-                - uploading
-                - uploaded
-            filesize:
-              type: integer
-              description: The size of your file in bytes.
-              example: 200000
-            receivedBytes:
-              type: array
-              description: >-
-                The total number of bytes received, listed for each chunk of the
-                upload.
-              items:
-                $ref: '#/components/schemas/bytes_range'
+          $ref: '#/components/schemas/videostatus_ingest'
         encoding:
-          type: object
-          properties:
-            playable:
-              type: boolean
-              description: Whether the video is playable or not.
-              example: true
-            qualities:
-              type: array
-              description: Available qualities the video can be viewed in.
-              items:
-                $ref: '#/components/schemas/quality'
-            metadata:
-              type: object
-              properties:
-                width:
-                  type: integer
-                  description: The width of the video in pixels.
-                height:
-                  type: integer
-                  description: The height of the video in pixels.
-                bitrate:
-                  type: number
-                  description: The number of bits processed per second.
-                duration:
-                  type: integer
-                  description: The length of the video.
-                framerate:
-                  type: integer
-                  description: >-
-                    The frequency with which consecutive images or frames appear
-                    on a display. Shown in this API as frames per second (fps).
-                  example: 60
-                samplerate:
-                  type: integer
-                  description: >-
-                    How many samples per second a digital audio system uses to
-                    record an audio signal. The higher the rate, the higher the
-                    frequencies that can be recorded. They are presented in this
-                    API using hertz.
-                  example: 48000
-                videoCodec:
-                  type: string
-                  description: >-
-                    The method used to compress and decompress digital video.
-                    API Video supports all codecs in the libavcodec library. 
-                  example: null
-                audioCodec:
-                  type: string
-                  description: >-
-                    The method used to compress and decompress digital audio for
-                    your video.
-                aspectRatio:
-                  type: string
-      title: VideoStatus
+          $ref: '#/components/schemas/videostatus_encoding'
       example:
         ingest:
           status: uploaded
@@ -5086,6 +3988,8 @@ components:
         encoding:
           playable: true
           qualities:
+            - quality: 240p
+              status: encoded
             - quality: 360p
               status: encoded
             - quality: 480p
@@ -5107,6 +4011,7 @@ components:
             audioCodec: aac
             aspectRatio: 16/9
     quality:
+      title: quality
       type: object
       properties:
         quality:
@@ -5116,6 +4021,7 @@ components:
             480p, 720p, 1080p, and 2160p.
           example: 720p
           enum:
+            - 240p
             - 360p
             - 480p
             - 720p
@@ -5133,8 +4039,8 @@ components:
             - encoding
             - encoded
             - failed
-      title: quality
     bytes_range:
+      title: bytes_range
       type: object
       properties:
         from:
@@ -5149,8 +4055,8 @@ components:
           type: integer
           description: The total number of bytes in the provided range.
           example: 10000
-      title: bytes_range
     chapter:
+      title: Chapter
       type: object
       properties:
         uri:
@@ -5163,8 +4069,8 @@ components:
           example: 'https://cdn.api.video/vod/vi3N6cDinStg3oBbN79GklWS/chapters/fr.vtt'
         language:
           type: string
-      title: Chapter
     upload-token:
+      title: UploadToken
       type: object
       properties:
         token:
@@ -5174,21 +4080,963 @@ components:
             upload.
           example: to1tcmSFHeYY5KzyhOqVKMKb
         ttl:
+          maximum: 2147483647
+          minimum: 0
           type: integer
           description: Time-to-live - how long the upload token is valid for.
-          minimum: 0
-          maximum: 2147483647
         createdAt:
           type: string
-          format: date-time
           description: 'When the token was created, displayed in ISO-8601 format.'
+          format: date-time
           example: '2019-12-16T08:25:51+00:00'
         expiresAt:
           type: string
-          format: date-time
           description: 'When the token expires, displayed in ISO-8601 format.'
+          format: date-time
           example: '2019-12-16T09:25:51+00:00'
-      title: UploadToken
+    authenticate-payload:
+      title: apiKey
+      required:
+        - apiKey
+      type: object
+      properties:
+        apiKey:
+          type: string
+          description: >-
+            Your account API key. You can use your sandbox API key, or you can
+            use your production API key.
+      example:
+        apiKey: 9VxMaPgsaFg7EBqmuspSzF7
+    refresh-token-payload:
+      title: refreshToken
+      required:
+        - refreshToken
+      type: object
+      properties:
+        refreshToken:
+          type: string
+          description: >
+            The refresh token is either the first refresh token you received
+            when you authenticated with the auth/api-key endpoint, or it's the
+            refresh token from the last time you used the auth/refresh endpoint.
+            Place this in the body of your request to obtain a new access token
+            (which is valid for an hour) and a new refresh token.
+      example:
+        refreshToken: >-
+          def502005346d9cc2bd79a7793ab5bdabfefcaabfbb8c253f14733f1262077e1a3f38c4751d6d20f590c3784e531a82adc11f05fc1949aa46d5575aaa99cb84b9334ba66ac773576b5d7a418937ae337de62811d086dd42ad1164b12f87d67be6ffea18f2d50be9b95697b21c4d3c4372849bdb2287259cb80541570e913691a08b2fa33c85885930de15cebea627fc09f0255562ab3d39d87d4ff8fc02b00e252afcd480421dec7de9d1411176bcf669c527762e22294b453bc9ea06e9fa8ba5b873feb2ee14ce0a6a6ddd4b78c580631e210e9b9387265dc2bec9478a66a09dcdce1c40d2f856689e9d81742c9628a0b87b359e0b218ea1f07427eef89f999e47af89792f598e05847bd008fddc32ee63f4a601ffb4cd2ad08977f1c854ec358238322c918f05aa5a41f8a171dee497218408abc8283473f6112aeed7310815416a0fa36c63667e0ed014fa40b8992891bf58bae400d901c01450101c88f4978938ad138adc19cfe5698d60fd82cb27c586f6a8f70f4393c7c9e579df8739d46d249fb76d7
+    videos-list-response:
+      title: Videos
+      required:
+        - data
+        - pagination
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/video'
+        pagination:
+          $ref: '#/components/schemas/pagination'
+    metadata:
+      title: metadata
+      type: object
+      x-client-all-args-constructor: true
+      properties:
+        key:
+          type: string
+          description: The constant that defines the data set.
+          example: Color
+        value:
+          type: string
+          description: A variable which belongs to the data set.
+          example: Green
+    video-create-payload:
+      required:
+        - title
+      type: object
+      title: videoCreationPayload
+      properties:
+        title:
+          type: string
+          description: The title of your new video.
+          example: Maths video
+        description:
+          type: string
+          description: A brief description of your video.
+          example: A video about string theory.
+        source:
+          type: string
+          description: >-
+            If you add a video already on the web, this is where you enter the
+            url for the video.
+          example: 'https://www.myvideo.url.com/video.mp4'
+        public:
+          type: boolean
+          description: >-
+            Whether your video can be viewed by everyone, or requires
+            authentication to see it. A setting of false will require a unique
+            token for each view.
+          example: true
+          default: true
+        panoramic:
+          type: boolean
+          description: Indicates if your video is a 360/immersive video.
+          example: false
+          default: false
+        mp4Support:
+          type: boolean
+          description: Enables mp4 version in addition to streamed version.
+          example: true
+          default: true
+        playerId:
+          type: string
+          description: The unique identification number for your video player.
+          example: pl45KFKdlddgk654dspkze
+        tags:
+          type: array
+          description: A list of tags you want to use to describe your video.
+          example: '["maths", "string theory", "video"]'
+          items:
+            type: string
+        metadata:
+          type: array
+          description: >-
+            A list of key value pairs that you use to provide metadata for your
+            video. These pairs can be made dynamic, allowing you to segment your
+            audience. You can also just use the pairs as another way to tag and
+            categorize your videos.
+          example: '[{"key": "Author", "value": "John Doe"}]'
+          items:
+            $ref: '#/components/schemas/metadata'
+        publishedAt:
+          type: string
+          description: >-
+            The API uses ISO-8601 format for time, and includes 3 places for
+            milliseconds.
+          format: date-time
+          example: '2020-07-14T23:36:18.598Z'
+      example:
+        title: Maths video
+        description: An amazing video explaining string theory.
+        public: false
+        panoramic: false
+        mp4Support: true
+        playerId: pl45KFKdlddgk654dspkze
+        tags:
+          - maths
+          - string theory
+          - video
+        metadata:
+          - key: Author
+            value: John Doe
+          - key: Format
+            value: Tutorial
+    video-upload-payload:
+      required:
+        - file
+      type: object
+      properties:
+        file:
+          type: string
+          x-client-chunk-upload: 'true'
+          format: binary
+          description: >-
+            The path to the video you would like to upload. The path must be
+            local. If you want to use a video from an online source, you must
+            use the "/videos" endpoint and add the "source" parameter when you
+            create a new video.
+          example: '@/path/to/video.mp4'
+    video-thumbnail-pick-payload:
+      type: object
+      title: pickThumbnailPayload
+      required:
+        - timecode
+      properties:
+        timecode:
+          pattern: '00:00:00.00'
+          type: string
+          description: |-
+            Frame in video to be used as a placeholder before the video plays. 
+            Example: '"00:01:00.000" for 1 minute into the video.'
+            Valid Patterns: 
+            "hh:mm:ss.ms"
+            "hh:mm:ss:frameNumber"
+            "124" (integer value is reported as seconds) 
+            If selection is out of range, "00:00:00.00" will be chosen.
+      example:
+        timecode: '00:00:00.000'
+    video-thumbnail-upload-payload:
+      required:
+        - file
+      type: object
+      properties:
+        file:
+          type: string
+          description: The image to be added as a thumbnail.
+          format: binary
+    video-update-payload:
+      type: object
+      title: videoUpdatePayload
+      properties:
+        playerId:
+          type: string
+          description: The unique ID for the player you want to associate with your video.
+          example: pl4k0jvEUuaTdRAEjQ4Jfrgz
+        title:
+          type: string
+          description: The title you want to use for your video.
+        description:
+          type: string
+          description: A brief description of the video.
+          example: A film about good books.
+        public:
+          type: boolean
+          description: >-
+            Whether the video is publicly available or not. False means it is
+            set to private.
+          example: true
+        panoramic:
+          type: boolean
+          description: Whether the video is a 360 degree or immersive video.
+          example: false
+        mp4Support:
+          type: boolean
+          description: Whether the player supports the mp4 format.
+          example: true
+        tags:
+          type: array
+          description: >-
+            A list of terms or words you want to tag the video with. Make sure
+            the list includes all the tags you want as whatever you send in this
+            list will overwrite the existing list for the video.
+          example: '["maths", "string theory", "video"]'
+          items:
+            type: string
+        metadata:
+          type: array
+          description: >-
+            A list (array) of dictionaries where each dictionary contains a key
+            value pair that describes the video. As with tags, you must send the
+            complete list of metadata you want as whatever you send here will
+            overwrite the existing metadata for the video.
+          items:
+            $ref: '#/components/schemas/metadata'
+      example:
+        playerId: pl45KFKdlddgk654dspkze
+        title: String theory
+        description: An amazing video explaining the string theory
+        public: false
+        panoramic: false
+        mp4Support: true
+        tags:
+          - maths
+          - string theory
+          - video
+        metadata:
+          - key: Author
+            value: John Doe
+          - key: Format
+            value: Tutorial
+    token-list-response:
+      title: uploadTokens
+      required:
+        - data
+        - pagination
+      type: object
+      properties:
+        data:
+          title: uploadToken
+          type: array
+          items:
+            $ref: '#/components/schemas/upload-token'
+        pagination:
+          $ref: '#/components/schemas/pagination'
+    token-create-payload:
+      title: tokenCreationPayload
+      type: object
+      properties:
+        ttl:
+          maximum: 2147483647
+          minimum: 0
+          type: integer
+          description: >-
+            Time in seconds that the token will be active. A value of 0 means
+            that the token has no exipration date. The default is to have no
+            expiration.
+          default: 0
+      example:
+        ttl: 3600
+    token-upload-payload:
+      required:
+        - file
+      type: object
+      properties:
+        file:
+          x-client-chunk-upload: 'true'
+          format: binary
+          type: string
+          description: The path to the video you want to upload.
+          example: path/to/video/video.mp4
+        videoId:
+          x-client-ignore: true
+          x-client-copy-from-response: true
+          type: string
+          description: >-
+            The video id returned by the first call to this endpoint in a large
+            video upload scenario.
+    live-stream-list-response:
+      title: LiveStreams
+      required:
+        - data
+        - pagination
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/live-stream'
+        pagination:
+          $ref: '#/components/schemas/pagination'
+    live-stream-create-payload:
+      title: liveStreamCreationPayload
+      required:
+        - name
+      type: object
+      properties:
+        name:
+          type: string
+          description: Add a name for your live stream here.
+          example: My Live Stream Video
+        record:
+          type: boolean
+          description: >-
+            Whether you are recording or not. True for record, false for not
+            record.
+          example: true
+          default: false
+        public:
+          type: boolean
+          description: >-
+            BETA FEATURE Please limit all public = false ("private") livestreams
+            to 3,000 users. Whether your video can be viewed by everyone, or
+            requires authentication to see it. A setting of false will require a
+            unique token for each view.
+        playerId:
+          type: string
+          description: The unique identifier for the player.
+          example: pl4f4ferf5erfr5zed4fsdd
+      example:
+        name: Test live
+        record: true
+        playerId: pl4f4ferf5erfr5zed4fsdd
+    live-stream-update-payload:
+      title: LiveStreamUpdatePayload
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name you want to use for your live stream.
+          example: My Live Stream Video
+        public:
+          type: boolean
+          description: >-
+            BETA FEATURE Please limit all public = false ("private") livestreams
+            to 3,000 users.
+            Whether your video can be viewed by everyone, or requires
+            authentication to see it. A setting of false will require a unique
+            token for each view.
+        record:
+          type: boolean
+          description: >-
+            Use this to indicate whether you want the recording on or off. On is
+            true, off is false.
+          example: true
+        playerId:
+          type: string
+          description: >-
+            The unique ID for the player associated with a live stream that you
+            want to update.
+          example: pl45KFKdlddgk654dspkze
+    captions-upload-payload:
+      required:
+        - file
+      type: object
+      properties:
+        file:
+          type: string
+          description: The video text track (VTT) you want to upload.
+          format: binary
+          example: 'https://cdn.api.video/vod/vi3N6cDinStg3oBbN79GklWS/captions/en.vtt'
+    live-stream-thumbnail-upload-payload:
+      required:
+        - file
+      type: object
+      properties:
+        file:
+          type: string
+          description: The image to be added as a thumbnail.
+          format: binary
+    captions-update-payload:
+      title: UpdateCaptionPayload
+      type: object
+      properties:
+        default:
+          type: boolean
+    captions-list-response:
+      title: VideoCaptions
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/subtitle'
+        pagination:
+          $ref: '#/components/schemas/pagination'
+    chapters-update-payload:
+      title: UpdateChapterPayload
+      required:
+        - file
+      type: object
+      properties:
+        file:
+          type: string
+          description: The VTT file describing the chapters you want to upload.
+          format: binary
+    chapters-list-response:
+      title: VideoChapters
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/chapter'
+        pagination:
+          $ref: '#/components/schemas/pagination'
+    players-list-response:
+      title: Players
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/player'
+        pagination:
+          $ref: '#/components/schemas/pagination'
+    players-upload-logo-payload:
+      required:
+        - file
+        - link
+      type: object
+      properties:
+        file:
+          type: string
+          format: binary
+          description: The name of the file you want to use for your logo.
+          example: mylogo.jpg
+        link:
+          type: string
+          format: string
+          description: The path to the file you want to upload and use as a logo.
+          example: path/to/my/logo/mylogo.jpg
+    raw-statistics-list-sessions-response:
+      title: VideoSessions
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/video-session'
+        pagination:
+          $ref: '#/components/schemas/pagination'
+    raw-statistics-list-live-stream-analytics-response:
+      title: LiveStreamSessions
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/live-stream-session'
+        pagination:
+          $ref: '#/components/schemas/pagination'
+    raw-statistics-list-player-session-events-response:
+      title: PlayerSessionEvents
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/player-session-event'
+        pagination:
+          $ref: '#/components/schemas/pagination'
+    webhooks-list-response:
+      title: Webhooks
+      type: object
+      properties:
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/webhook'
+        pagination:
+          $ref: '#/components/schemas/pagination'
+    webhooks-create-payload:
+      required:
+        - events
+        - url
+      type: object
+      properties:
+        events:
+          type: array
+          description: >-
+            A list of the webhooks that you are subscribing to. Currently
+            "video.encoding.quality.completed" is the only option.
+            video.encoding.quality.completed - a video encoding quality is ready
+            for the video (for example the 720p quality hls encoding video is
+            ready.)
+          example: video.encoding.quality.completed
+          items:
+            type: string
+        url:
+          type: string
+          description: >-
+            The the url to which HTTP notifications are sent. It could be any
+            http or https URL.
+          example: 'https://example.com/webhooks'
+      example:
+        events:
+          - video.encoding.quality.completed
+        url: 'http://clientnotificationserver.com/notif?myquery=query'
+    pagination_link:
+      type: object
+      title: PaginationLink
+      properties:
+        rel:
+          type: string
+          pattern: ^self$
+        uri:
+          type: string
+          format: uri
+    video_source_live_stream_link:
+      type: object
+      properties:
+        rel:
+          type: string
+        uri:
+          type: string
+    video_source_live_stream:
+      type: object
+      properties:
+        liveStreamId:
+          type: string
+          description: The unique identifier for the live stream.
+          example: li400mYKSgQ6xs7taUeSaEKr
+        links:
+          type: array
+          items:
+            $ref: '#/components/schemas/video_source_live_stream_link'
+      description: This appears if the video is from a Live Record.
+    videoSource:
+      type: object
+      properties:
+        uri:
+          type: string
+          description: The URL where the video is stored.
+          example: /videos/vi4k0jvEUuaTdRAEjQ4Prklg/source
+        type:
+          type: string
+        liveStream:
+          $ref: '#/components/schemas/video_source_live_stream'
+      description: Source information about the video.
+    videoAssets:
+      type: object
+      properties:
+        hls:
+          type: string
+          description: >-
+            This is the manifest URL. For HTTP Live Streaming (HLS), when a HLS
+            video stream is initiated, the first file to download is the
+            manifest. This file has the extension M3U8, and provides the video
+            player with information about the various bitrates available for
+            streaming.
+          format: uri
+        iframe:
+          type: string
+          description: Code to use video from a third party website
+          example: >-
+            <iframe
+            src="//embed.api.video/c188ed58-3403-46a2-b91b-44603d10b2c9?token=831a9bd9-9f50-464c-a369-8e9d914371ae"
+            width="100%" height="100%" frameborder="0" scrolling="no"
+            allowfullscreen=""></iframe>
+        player:
+          type: string
+          description: Raw url of the player.
+          format: uri
+          example: >-
+            https://embed.api.video/1b9d6ae8-8f57-4b6d-8552-d636926b4f5f?token=831a9bd9-9f50-464c-a369-8e9d914371ae
+        thumbnail:
+          type: string
+          description: Poster of the video.
+          format: uri
+          example: >-
+            https://cdn.api.video/stream/831a9bd9-9f50-464c-a369-8e9d914371ae/thumbnail.jpg
+        mp4:
+          type: string
+          description: Available only if mp4Support is enabled. Raw mp4 url.
+          format: uri
+          example: >-
+            https://cdn.api.video/vod/vi4k0jvEUuaTdRAEjQ4Jfrgz/token/8fd70443-d9f0-45d2-b01c-12c8cfc707c9/mp4/720/source.mp4
+      description: >-
+        Collection of details about the video object that you can use to work
+        with the video object.
+    video_session_session:
+      type: object
+      properties:
+        sessionId:
+          type: string
+          description: >-
+            The unique identifier for the session that you can use to track what
+            happens during it.
+          example: psEmFwGQUAXR2lFHj5nDOpy
+        loadedAt:
+          type: string
+          description: 'When the video session started, presented in ISO-8601 format.'
+          format: date-time
+          example: '2019-06-24T11:45:01.109+00'
+        endedAt:
+          type: string
+          description: 'When the video session ended, presented in ISO-8601 format.'
+          format: date-time
+          example: '2019-06-24T12:45:01.109+00'
+    video_session_location:
+      type: object
+      properties:
+        country:
+          type: string
+          description: The country of the viewer.
+          example: France
+        city:
+          type: string
+          description: The city of the viewer.
+          example: Paris
+      description: The location of the viewer.
+    video_session_referrer:
+      type: object
+      properties:
+        url:
+          type: string
+          description: The link the viewer used to reach the video session.
+          example: 'https://api.video'
+        medium:
+          type: string
+          description: >-
+            How they arrived at the site, for example organic or paid. Organic
+            meaning they found it themselves and paid meaning they followed a
+            link from an advertisement.
+          example: organic
+        source:
+          type: string
+          description: >-
+            The source the referrer came from to the video session. For example
+            if they searched through google to find the stream.
+          example: 'https://google.com'
+        searchTerm:
+          type: string
+          description: The search term they typed to arrive at the video session.
+    video_session_device:
+      type: object
+      properties:
+        type:
+          type: string
+          description: 'What the type is like desktop, laptop, mobile.'
+          example: desktop
+        vendor:
+          type: string
+          description: 'If known, what the brand of the device is, like Apple, Dell, etc.'
+          example: Dell
+        model:
+          type: string
+          description: 'The specific model of the device, if known.'
+          example: unknown
+      description: What type of device the user is on when in the video session.
+    video_session_os:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the operating system.
+          example: Microsoft Windows
+        shortname:
+          type: string
+          description: >-
+            The nickname for the operating system, often representing the
+            version.
+          example: W10
+        version:
+          type: string
+          description: The version of the operating system.
+          example: Windows 10
+      description: The operating system the viewer is on.
+    video_session_client:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the browser used to view the video session.
+          example: Firefox
+        version:
+          type: string
+          description: The version of the browser used to view the video session.
+          example: '67.0'
+        type:
+          type: string
+          description: The type of client used to view the video session.
+          example: browser
+      description: What kind of browser the viewer is using for the video session.
+    live_stream_assets:
+      type: object
+      properties:
+        hls:
+          type: string
+          description: The http live streaming (HLS) link for your live video stream.
+          format: uri
+          example: 'https://live.api.video/li4pqNqGUkhKfWcBGpZVLRY5.m3u8'
+        iframe:
+          type: string
+          description: The embed code for the iframe containing your live video stream.
+          example: >-
+            <iframe
+            src=\"https://embed.api.video/live/li4pqNqGUkhKfWcBGpZVLRY5\"
+            width=\"100%\" height=\"100%\" frameborder=\"0\" scrolling=\"no\"
+            allowfullscreen=\"\"></iframe>
+        player:
+          type: string
+          description: A link to the video player that is playing your live stream.
+          format: uri
+          example: 'https://embed.api.video/live/li400mYKSgQ6xs7taUeSaEKr'
+        thumbnail:
+          type: string
+          description: A link to the thumbnail for your video.
+          format: uri
+          example: 'https://cdn.api.video/live/li400mYKSgQ6xs7taUeSaEKr/thumbnail.jpg'
+    live_stream_session_session:
+      type: object
+      properties:
+        sessionId:
+          type: string
+          description: >-
+            A unique identifier for your session. You can use this to track what
+            happens during a specific session.
+        loadedAt:
+          type: string
+          description: >-
+            When the session started, with the date and time presented in
+            ISO-8601 format.
+          format: date-time
+          example: '2019-06-24T11:45:01.109+00'
+        endedAt:
+          type: string
+          description: >-
+            When the session ended, with the date and time presented in ISO-8601
+            format.
+          format: date-time
+          example: '2019-06-24T12:45:01.109+00'
+    live_stream_session_location:
+      type: object
+      properties:
+        country:
+          type: string
+          description: The country of the viewer of the live stream.
+          example: France
+        city:
+          type: string
+          description: The city of the viewer of the live stream.
+          example: Paris
+      description: The location of the viewer of the live stream.
+    live_stream_session_referrer:
+      type: object
+      properties:
+        url:
+          type: string
+          description: >-
+            The website the viewer of the live stream was referred to in order
+            to view the live stream.
+          example: 'https://api.video'
+        medium:
+          type: string
+          description: >-
+            The type of search that brought the viewer to the live stream.
+            Organic would be they found it on their own, paid would be they
+            found it via an advertisement.
+          example: organic
+        source:
+          type: string
+          description: >-
+            Where the viewer came from to see the live stream (usually where
+            they searched from).
+          example: 'https://google.com'
+        searchTerm:
+          type: string
+          description: What term they searched for that led them to the live stream.
+          example: video stream
+    live_stream_session_device:
+      type: object
+      properties:
+        type:
+          type: string
+          description: 'What the type is like desktop, laptop, mobile.'
+          example: desktop
+        vendor:
+          type: string
+          description: 'If known, what the brand of the device is, like Apple, Dell, etc.'
+          example: Dell
+        model:
+          type: string
+          description: 'The specific model of the device, if known.'
+          example: unknown
+      description: What type of device the user is on when in the live stream session.
+    live_stream_session_client:
+      type: object
+      properties:
+        name:
+          type: string
+          description: The name of the browser used to view the live stream session.
+          example: Firefox
+        version:
+          type: string
+          description: The version of the browser used to view the live stream session.
+          example: '67.0'
+        type:
+          type: string
+          description: The type of client used to view the live stream session.
+          example: browser
+      description: What kind of browser the viewer is using for the live stream session.
+    videostatus_ingest:
+      type: object
+      properties:
+        status:
+          type: string
+          description: >-
+            There are three possible ingest statuses. missing - you are missing
+            information required to ingest the video. uploading - the video is
+            in the process of being uploaded. uploaded - the video is ready for
+            use.
+          example: uploaded
+          enum:
+            - missing
+            - uploading
+            - uploaded
+        filesize:
+          type: integer
+          description: The size of your file in bytes.
+          example: 200000
+        receivedBytes:
+          type: array
+          description: >-
+            The total number of bytes received, listed for each chunk of the
+            upload.
+          items:
+            $ref: '#/components/schemas/bytes_range'
+      description: >-
+        Details about the capturing, transferring, and storing of your video for
+        use immediately or in the future.
+    videostatus_encoding_metadata:
+      type: object
+      properties:
+        width:
+          type: integer
+          description: The width of the video in pixels.
+        height:
+          type: integer
+          description: The height of the video in pixels.
+        bitrate:
+          type: number
+          description: The number of bits processed per second.
+        duration:
+          type: integer
+          description: The length of the video.
+        framerate:
+          type: integer
+          description: >-
+            The frequency with which consecutive images or frames appear on a
+            display. Shown in this API as frames per second (fps).
+          example: 60
+        samplerate:
+          type: integer
+          description: >-
+            How many samples per second a digital audio system uses to record an
+            audio signal. The higher the rate, the higher the frequencies that
+            can be recorded. They are presented in this API using hertz.
+          example: 48000
+        videoCodec:
+          type: string
+          description: >-
+            The method used to compress and decompress digital video. API Video
+            supports all codecs in the libavcodec library. 
+        audioCodec:
+          type: string
+          description: >-
+            The method used to compress and decompress digital audio for your
+            video.
+        aspectRatio:
+          type: string
+    videostatus_encoding:
+      type: object
+      properties:
+        playable:
+          type: boolean
+          description: Whether the video is playable or not.
+          example: true
+        qualities:
+          type: array
+          description: Available qualities the video can be viewed in.
+          items:
+            $ref: '#/components/schemas/quality'
+        metadata:
+          $ref: '#/components/schemas/videostatus_encoding_metadata'
+    account:
+      type: object
+      title: Account
+      deprecated: true
+      properties:
+        quota:
+          type: object
+          description: Deprecated
+          properties:
+            quotaUsed:
+              type: number
+              description: Deprecated
+            quotaRemaining:
+              type: number
+              description: Deprecated
+            quotaTotal:
+              type: number
+              description: Deprecated
+        features:
+          type: array
+          description: >-
+            Deprecated. What features are enabled for your account. Choices
+            include: app.dynamic_metadata - the ability to dynamically tag
+            videos to better segment and understand your audiences,
+            app.event_log - the ability to create and retrieve a log detailing
+            how your videos were interacted with, player.white_label - the
+            ability to customise your player, stats.player_events - the ability
+            to see statistics about how your player is being used,
+            transcode.mp4_support - the ability to reformat content into mp4
+            using the H264 codec.
+          example: '["app.dynamic_metadata, app.event_log"]'
+          items:
+            type: string
+        environment:
+          type: string
+          description: >-
+            Deprecated. Whether you are using your production or sandbox API key
+            will impact what environment is displayed here, as well as stats and
+            features information. If you use your sandbox key, the environment
+            is "sandbox." If you use your production key, the environment is
+            "production."
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
 x-explorer-enabled: true
 x-proxy-enabled: true
 x-samples-enabled: true
