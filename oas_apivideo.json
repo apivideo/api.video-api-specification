@@ -3302,7 +3302,7 @@
     },
     "/analytics/videos/{videoId}" : {
       "get" : {
-        "tags" : [ "Raw statistics" ],
+        "tags" : [ "Analytics" ],
         "summary" : "List video player sessions",
         "description" : "Retrieve all available user sessions for a specific video.",
         "operationId" : "GET_analytics-videos-videoId",
@@ -3444,7 +3444,7 @@
     },
     "/analytics/live-streams/{liveStreamId}" : {
       "get" : {
-        "tags" : [ "Raw statistics" ],
+        "tags" : [ "Analytics" ],
         "summary" : "List live stream player sessions",
         "operationId" : "GET_analytics-live-streams-liveStreamId",
         "x-client-action" : "getLiveStreamAnalytics",
@@ -3572,7 +3572,7 @@
     },
     "/analytics/sessions/{sessionId}/events" : {
       "get" : {
-        "tags" : [ "Raw statistics" ],
+        "tags" : [ "Analytics" ],
         "summary" : "List player session events",
         "description" : "Useful to track and measure video's engagement.",
         "operationId" : "GET_analytics-sessions-sessionId-events",
