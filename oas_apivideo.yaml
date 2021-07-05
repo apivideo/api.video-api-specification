@@ -382,6 +382,17 @@ paths:
         ```
         In this case, the service will respond `202 Accepted` and download the
         video asynchronously.
+        ### Track users with Dynamic Metadata
+        Metadata values can be a key:value where the values are predefined, but Dynamic metadata allows you to enter *any* value for a defined key.  To defined a dynamic metadata pair use:
+        ```
+        "metadata":[{"dynamicKey": "__dynamicKey__"}]
+        ```
+        The double underscore on both sides of the value allows any variable to be added for a given video session. Added the the url you might have:
+        ```
+        <iframe type="text/html" src="https://embed.api.video/vod/vi6QvU9dhYCzW3BpPvPsZUa8?metadata[classUserName]=Doug" width="960" height="320" frameborder="0" scrollling="no"></iframe>
+        ```
+        This video session will be tagged as watched by Doug - allowing for in-depth analysis on how each viewer interacts with the videos.
+
          We have tutorials on:
         * [Creating and uploading
         videos](https://api.video/blog/tutorials/video-upload-tutorial)
@@ -391,6 +402,7 @@ paths:
         videos](https://api.video/blog/tutorials/video-tagging-best-practices)
         * [Private
         videos](https://api.video/blog/tutorials/tutorial-private-videos)
+        * [Using Dynamic Metadata](https://api.video/blog/tutorials/dynamic-metadata)
       operationId: POST-video
       x-client-action: create
       requestBody:
