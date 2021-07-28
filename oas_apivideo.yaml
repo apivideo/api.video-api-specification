@@ -20,6 +20,8 @@ paths:
         seconds). A refresh token is also returned. View a
         [tutorial](https://api.video/blog/tutorials/authentication-tutorial) on
         authentication.
+
+        All tutorials using the [authentication endpoint](https://api.video/blog/endpoints/authenticate)
       operationId: POST_auth-api-key
       x-client-action: authenticate
       x-client-hidden: true
@@ -116,7 +118,7 @@ paths:
         Requests to this endpoint return a list of your videos (with all their
         details). With no parameters added to this query, the API returns all
         videos. You can filter what videos the API returns using the parameters
-        described below.
+        described below.  We have [several tutorials](https://api.video/blog/endpoints/video-list) that demonstrate this endpoint.
       operationId: LIST-videos
       x-client-action: list
       x-group-parameters: true
@@ -153,7 +155,7 @@ paths:
           description: >-
             Videos can be tagged with metadata tags in key:value pairs. You can
             search for videos with specific key value pairs using this
-            parameter.
+            parameter. [Dynamic Metadata](https://api.video/blog/endpoints/dynamic-metadata) allows you to define a key that allows any value pair.
           required: false
           style: form
           explode: true
@@ -360,7 +362,7 @@ paths:
         - Videos
       summary: Create a video
       description: >
-        To create a video, you create its metadata first, before adding the
+        To create a video, you create its container&parameters first, before adding the
         video file (exception - when using an existing HTTP source).
         Videos are public by default. Mp4 encoded versions are created at the
         highest quality (max 1080p) by default.
@@ -373,7 +375,9 @@ paths:
              "mp4Support":true
         }'
 
-        ```
+
+        ```  
+
 
         ### Creating a hosted video 
 
@@ -385,6 +389,7 @@ paths:
         -H 'Authorization: Bearer {access_token} \
         -d '{"source":"http://uri/to/video.mp4", "title":"My video"}'
         ```
+
         
         In this case, the service will respond `202 Accepted` and download the
         video asynchronously.
@@ -397,12 +402,15 @@ paths:
         "metadata":[{"dynamicKey": "__dynamicKey__"}]
         ```
         
+
         The double underscore on both sides of the value allows any variable to be added for a given video session. Added the the url you might have:
         
         ```
         <iframe type="text/html" src="https://embed.api.video/vod/vi6QvU9dhYCzW3BpPvPsZUa8?metadata[classUserName]=Doug" width="960" height="320" frameborder="0" scrollling="no"></iframe>
         ```
+
         
+
         This video session will be tagged as watched by Doug - allowing for in-depth analysis on how each viewer interacts with the videos.
 
         ### We have tutorials on:
@@ -412,7 +420,9 @@ paths:
 
         * [Uploading large
         videos](https://api.video/blog/tutorials/video-upload-tutorial-large-videos)
+
         
+
         * [Using tags with
         videos](https://api.video/blog/tutorials/video-tagging-best-practices)
 
@@ -420,6 +430,9 @@ paths:
         videos](https://api.video/blog/tutorials/tutorial-private-videos)
 
         * [Using Dynamic Metadata](https://api.video/blog/tutorials/dynamic-metadata)
+
+
+        * Full list of [tutorials](https://api.video/blog/endpoints/video-create) that demonstrate this endpoint.
 
       operationId: POST-video
       x-client-action: create
@@ -524,6 +537,7 @@ paths:
           -F file=@/path/to/video.mp4
 
           ```
+        Tutorials using [video upload](https://api.video/blog/endpoints/video-upload).
       operationId: POST_videos-videoId-source
       x-client-action: upload
       x-client-chunk-upload: true
@@ -653,6 +667,7 @@ paths:
         Thumbnail](https://docs.api.video/reference#patch_videos-videoid-thumbnail)
         to pick a time in the video. There may be a short delay before the new
         thumbnail is delivered to our CDN.
+        Tutorials using [Thumbnail upload](https://api.video/blog/endpoints/videos-upload-a-thumbnail).
       operationId: POST_videos-videoId-thumbnail
       x-client-action: uploadThumbnail
       parameters:
@@ -750,6 +765,8 @@ paths:
         image for your thumbnail, use the [Upload a
         Thumbnail](https://docs.api.video/reference#post_videos-videoid-thumbnail)
         endpoint. There may be a short delay for the thumbnail to update.
+
+        Tutorials using [Thumbnail picking](https://api.video/blog/endpoints/video-pick-a-thumbnail).
       operationId: PATCH_videos-videoId-thumbnail
       x-client-action: pickThumbnail
       parameters:
@@ -837,6 +854,7 @@ paths:
         For private videos, it will generate a unique token url. Use this to
         retrieve any details you need about a video, or set up a private viewing
         URL.
+        Tutorials using [video GET](https://api.video/blog/endpoints/video-get).
       operationId: GET-video
       x-client-action: get
       parameters:
@@ -915,6 +933,7 @@ paths:
       description: >-
         If you do not need a video any longer, you can send a request to delete
         it. All you need is the videoId.
+        Tutorials using [video deletion](https://api.video/blog/endpoints/video-delete).
       operationId: DELETE-video
       x-client-action: delete
       parameters:
@@ -956,6 +975,7 @@ paths:
         the request body. NOTE: If you are updating an array, you must provide
         the entire array as what you provide here overwrites what is in the
         system rather than appending to it.
+        Tutorials using [video update](https://api.video/blog/endpoints/video-update).
       operationId: PATCH-video
       x-client-action: update
       parameters:
@@ -1065,6 +1085,7 @@ paths:
         video is uploaded or ready to playback.
         Once encoding is completed, the response also lists the available stream
         qualities.
+        Tutorials using [video status](https://api.video/blog/endpoints/video-status).
       operationId: GET-video-status
       x-client-action: getVideoStatus
       parameters:
@@ -1147,6 +1168,8 @@ paths:
         A delegated token is used to allow secure uploads without exposing your
         API key. Use this endpoint to retrieve a list of all currently active
         delegated tokens.
+
+        Tutorials using [delegated upload](https://api.video/blog/endpoints/delegated-upload).
       operationId: GET_upload-tokens
       x-group-parameters: true
       x-client-paginated: true
@@ -1224,6 +1247,7 @@ paths:
       description: >-
         Use this endpoint to generate an upload token. You can use this token to
         authenticate video uploads while keeping your API key safe.
+        Tutorials using [delegated upload](https://api.video/blog/endpoints/delegated-upload).
       operationId: POST_upload-tokens
       x-client-action: createToken
       requestBody:
@@ -1559,6 +1583,8 @@ paths:
         walkthrough of this API with OBS.
         Your RTMP endpoint for the livestream is
         rtmp://broadcast.api.video/s/{streamKey}
+
+        Tutorials that [create live streams](https://api.video/blog/endpoints/live-create).
       operationId: POST_live-streams
       x-client-action: create
       requestBody:
@@ -1610,6 +1636,7 @@ paths:
       description: >-
         Supply a LivestreamId, and you'll get all the details for streaming
         into, and watching the livestream.
+        Tutorials that use the [show livestream endpoint](https://api.video/blog/endpoints/live-stream-status).
       operationId: GET_live-streams-liveStreamId
       x-client-action: get
       parameters:
@@ -1683,6 +1710,7 @@ paths:
         streaming, changing the recording status will only affect the NEXT
         stream.    The public=false 'private livestream' is available as a BETA
         feature, and should be limited to livestreams of 3,000 viewers or fewer.
+        
       operationId: PATCH_live-streams-liveStreamId
       x-client-action: update
       parameters:
@@ -1744,7 +1772,7 @@ paths:
       tags:
         - Live
       summary: Upload a thumbnail
-      description: Upload an image to use as a backdrop for your livestream.
+      description: Upload an image to use as a backdrop for your livestream. Tutorials that [update live stream thumbnails](https://api.video/blog/endpoints/live-upload-a-thumbnail).
       operationId: POST_live-streams-liveStreamId-thumbnail
       x-client-action: uploadThumbnail
       parameters:
@@ -1847,6 +1875,8 @@ paths:
         Display a caption for a video in a specific language. If the language is
         available, the caption is returned. Otherwise, you will get a response
         indicating the caption was not found.
+
+        Tutorials that use the [captions endpoint](https://api.video/blog/endpoints/captions).
       operationId: GET_videos-videoId-captions-language
       x-client-action: get
       parameters:
@@ -2158,12 +2188,13 @@ paths:
       tags:
         - Chapters
       summary: Show a chapter
+      description: Chapters help your viewers find the sections of the video they are most interested in viewing. Tutorials that use the [chapters endpoint](https://api.video/blog/endpoints/chapters).
       operationId: GET_videos-videoId-chapters-language
       x-client-action: get
       parameters:
         - name: videoId
           in: path
-          description: The unique identifier for the video you want to show a chapter for.
+          description: The unique identifier for the video you want to show a chapter for. 
           required: true
           style: simple
           explode: false
@@ -2387,6 +2418,8 @@ paths:
       description: >-
         Retrieve a list of all the players you created, as well as details about
         each one.
+
+        Tutorials that use the [player endpoint](https://api.video/blog/endpoints/player).
       operationId: GET_players
       x-client-action: list
       x-group-parameters: true
@@ -2851,7 +2884,7 @@ paths:
       tags:
         - Analytics
       summary: List video player sessions
-      description: Retrieve all available user sessions for a specific video.
+      description: Retrieve all available user sessions for a specific video. Tutorials that use the [analytics endpoint](https://api.video/blog/endpoints/analytics).
       operationId: GET_analytics-videos-videoId
       x-client-action: listSessions
       x-group-parameters: true
@@ -2887,7 +2920,7 @@ paths:
         - name: metadata
           in: query
           description: >-
-            Metadata and Dynamic Metadata filter. Send an array of key value
+            Metadata and [Dynamic Metadata](https://api.video/blog/endpoints/dynamic-metadata) filter. Send an array of key value
             pairs you want to filter sessios with.
           required: false
           style: form
@@ -3655,7 +3688,7 @@ components:
           description: >
             Metadata you can use to categorise and filter videos. Metadata is a
             list of dictionaries, where each dictionary represents a key value
-            pair for categorising a video. 
+            pair for categorising a video. [Dynamic Metadata](https://api.video/blog/endpoints/dynamic-metadata) allows you to define a key that allows any value pair.
           example: >-
             [{"key":"Author", "value":"John Doe"}, {"key":"Format",
             "value":"Tutorial"}]
@@ -3674,7 +3707,7 @@ components:
           type: boolean
           description: >
             Defines if the content is publicly reachable or if a unique token is
-            needed for each play session.
+            needed for each play session. Default is true. Tutorials on [private videos](https://api.video/blog/endpoints/private-videos).
           example: false
         panoramic:
           type: boolean
@@ -4217,7 +4250,7 @@ components:
           description: >-
             Whether your video can be viewed by everyone, or requires
             authentication to see it. A setting of false will require a unique
-            token for each view.
+            token for each view. Default is true. Tutorials on [private videos](https://api.video/blog/endpoints/private-videos).
           example: true
           default: true
         panoramic:
@@ -4245,8 +4278,7 @@ components:
           description: >-
             A list of key value pairs that you use to provide metadata for your
             video. These pairs can be made dynamic, allowing you to segment your
-            audience. You can also just use the pairs as another way to tag and
-            categorize your videos.
+            audience. Read more on [dynamic metadata](https://api.video/blog/endpoints/dynamic-metadata).
           example: '[{"key": "Author", "value": "John Doe"}]'
           items:
             $ref: '#/components/schemas/metadata'
@@ -4335,7 +4367,7 @@ components:
           type: boolean
           description: >-
             Whether the video is publicly available or not. False means it is
-            set to private.
+            set to private. Default is true. Tutorials on [private videos](https://api.video/blog/endpoints/private-videos).
           example: true
         panoramic:
           type: boolean
@@ -4360,7 +4392,7 @@ components:
             A list (array) of dictionaries where each dictionary contains a key
             value pair that describes the video. As with tags, you must send the
             complete list of metadata you want as whatever you send here will
-            overwrite the existing metadata for the video.
+            overwrite the existing metadata for the video. [Dynamic Metadata](https://api.video/blog/endpoints/dynamic-metadata) allows you to define a key that allows any value pair.
           items:
             $ref: '#/components/schemas/metadata'
       example:
