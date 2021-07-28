@@ -155,7 +155,7 @@ paths:
           description: >-
             Videos can be tagged with metadata tags in key:value pairs. You can
             search for videos with specific key value pairs using this
-            parameter.
+            parameter. [Dynamic Metadata](https://api.video/blog/endpoints/dynamic-metadata) allows you to define a key that allows any value pair.
           required: false
           style: form
           explode: true
@@ -362,7 +362,7 @@ paths:
         - Videos
       summary: Create a video
       description: >
-        To create a video, you create its metadata first, before adding the
+        To create a video, you create its container&parameters first, before adding the
         video file (exception - when using an existing HTTP source).
         Videos are public by default. Mp4 encoded versions are created at the
         highest quality (max 1080p) by default.
@@ -388,9 +388,9 @@ paths:
 
         In this case, the service will respond `202 Accepted` and download the
         video asynchronously.
-        ### Track users with Dynamic Metadata
+        ### Track users with [Dynamic Metadata](https://api.video/blog/endpoints/dynamic-metadata)
 
-        Metadata values can be a key:value where the values are predefined, but Dynamic metadata allows you to enter *any* value for a defined key.  To defined a dynamic metadata pair use:
+        Metadata values can be a key:value where the values are predefined, but Dynamic metadata allows you to enter *any* value for a defined key.  To define a dynamic metadata pair use:
         ```
         "metadata":[{"dynamicKey": "__dynamicKey__"}]
         ```
@@ -2902,7 +2902,7 @@ paths:
         - name: metadata
           in: query
           description: >-
-            Metadata and Dynamic Metadata filter. Send an array of key value
+            Metadata and [Dynamic Metadata](https://api.video/blog/endpoints/dynamic-metadata) filter. Send an array of key value
             pairs you want to filter sessios with.
           required: false
           style: form
@@ -3661,7 +3661,7 @@ components:
           description: >
             Metadata you can use to categorise and filter videos. Metadata is a
             list of dictionaries, where each dictionary represents a key value
-            pair for categorising a video. 
+            pair for categorising a video. [Dynamic Metadata](https://api.video/blog/endpoints/dynamic-metadata) allows you to define a key that allows any value pair.
           example: >-
             [{"key":"Author", "value":"John Doe"}, {"key":"Format",
             "value":"Tutorial"}]
@@ -3680,7 +3680,7 @@ components:
           type: boolean
           description: >
             Defines if the content is publicly reachable or if a unique token is
-            needed for each play session.
+            needed for each play session. Default is true. Tutorials on [private videos](https://api.video/blog/endpoints/private-videos).
           example: false
         panoramic:
           type: boolean
@@ -4223,7 +4223,7 @@ components:
           description: >-
             Whether your video can be viewed by everyone, or requires
             authentication to see it. A setting of false will require a unique
-            token for each view.
+            token for each view. Default is true. Tutorials on [private videos](https://api.video/blog/endpoints/private-videos).
           example: true
           default: true
         panoramic:
@@ -4251,8 +4251,7 @@ components:
           description: >-
             A list of key value pairs that you use to provide metadata for your
             video. These pairs can be made dynamic, allowing you to segment your
-            audience. You can also just use the pairs as another way to tag and
-            categorize your videos.
+            audience. Read more on [dynamic metadata](https://api.video/blog/endpoints/dynamic-metadata).
           example: '[{"key": "Author", "value": "John Doe"}]'
           items:
             $ref: '#/components/schemas/metadata'
@@ -4341,7 +4340,7 @@ components:
           type: boolean
           description: >-
             Whether the video is publicly available or not. False means it is
-            set to private.
+            set to private. Default is true. Tutorials on [private videos](https://api.video/blog/endpoints/private-videos).
           example: true
         panoramic:
           type: boolean
@@ -4366,7 +4365,7 @@ components:
             A list (array) of dictionaries where each dictionary contains a key
             value pair that describes the video. As with tags, you must send the
             complete list of metadata you want as whatever you send here will
-            overwrite the existing metadata for the video.
+            overwrite the existing metadata for the video. [Dynamic Metadata](https://api.video/blog/endpoints/dynamic-metadata) allows you to define a key that allows any value pair.
           items:
             $ref: '#/components/schemas/metadata'
       example:
