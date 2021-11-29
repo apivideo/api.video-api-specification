@@ -1,23 +1,13 @@
-[![badge](https://img.shields.io/twitter/follow/api_video?style=social)](https://twitter.com/intent/follow?screen_name=api_video)
+[![badge](https://img.shields.io/twitter/follow/api_video?style=social)](https://twitter.com/intent/follow?screen_name=api_video) &nbsp; [![badge](https://img.shields.io/github/stars/apivideo/api.video-api-specification?style=social)](https://github.com/apivideo/api.video-api-specification) &nbsp; [![badge](https://img.shields.io/discourse/topics?server=https%3A%2F%2Fcommunity.api.video)](https://community.api.video)
 
-[![badge](https://img.shields.io/github/stars/apivideo/API_OAS_file?style=social)](https://github.com/apivideo/API_OAS_file)
+![](https://github.com/apivideo/api.video-api-specification/blob/master/apivideo_banner.png)
+<h1 align="center">api.video API OpenAPI specification</h1>
 
-[![badge](https://img.shields.io/discourse/topics?server=https%3A%2F%2Fcommunity.api.video)](https://community.api.video)
-
-
-![](https://github.com/apivideo/API_OAS_file/blob/master/apivideo_banner.png)
-# API Video 
-
-[api.video](https://api.video) provides video APIs for building, scaling and operating on-demand and live streaming videos in your app, software or platform.
-
-# API_OAS_file
-
-This swagger file powers API Video's API reference [documentation](https://docs.api.video/reference)
+[api.video](https://api.video) is the video infrastructure for product builders. Lightning fast video APIs for integrating, scaling, and managing on-demand & low latency live streaming features in your app.
 
 
-oas_apivideo_legacy.json is the file used through Sept 30, 2020.  
+# Project description
 
-The oas_apivideo.json file has been validated with no errors on swaggerhub as valid swagger 2.0.
-
-We updated to swagger 3.0 as of Jan 15, 2021.
+This OpenAPI specification file powers API Video's API reference [documentation](https://docs.api.video/reference).
+It is also used to generate all our API clients using our [API client generator](https://github.com/apivideo/api.video-api-client-generator).
 
