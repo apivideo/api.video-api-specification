@@ -608,15 +608,16 @@ paths:
           example: vi4k0jvEUuaTdRAEjQ4Jfrgz
         - name: Content-Range
           in: header
-          description: Content-Range can be used if you want to split your file. You can do this by parts, or by chunk. 
-          * If you split your file by bytes, bear in mind byte ranges are inclusive, meaning that bytes 0-5242880 represents the first 5,242,880 bytes in a file or object./nAlso, the Content-Range header value must match the following pattern: bytes <from_byte>-<to_byte>/<total_bytes>:
-           * <from_byte> is a positive integer or 0. It represents the range start (aka lower bound), i.e., the first byte of the chunk compared to the total bytes composing the full video source. The first sequential range always starts at 0.
-           * <to_byte> is a positive integer representing the range end (aka upper bound), i.e., the last byte of the chunk compared to the total bytes composing the full video source.
-           * <total_bytes> is a positive integer representing the total bytes composing the full video source. It can also be * if or as long as it is unknown. Technically, this value is required only one time and cannot differ in several requests.
-          * If you split your file by part (recommended option),
-          * If you split your file by parts (recommended option), the `Content-Range` header value must match the following pattern: `part <part>/<total_parts>`:
-           * `<part>` is a positive integer representing the part number. The first sequential part number is always 1.
-           * `<total_parts>` is a positive integer representing the total parts of the video source. It can also be `*` if or as long as it is unknown. Technically, this value is required only one time and cannot differ in several requests.
+          description: |
+            Content-Range can be used if you want to split your file. You can do this by parts, or by chunk.
+            * If you split your file by bytes, bear in mind byte ranges are inclusive, meaning that bytes 0-5242880 represents the first 5,242,880 bytes in a file or object./nAlso, the Content-Range header value must match the following pattern: bytes <from_byte>-<to_byte>/<total_bytes>:
+             * <from_byte> is a positive integer or 0. It represents the range start (aka lower bound), i.e., the first byte of the chunk compared to the total bytes composing the full video source. The first sequential range always starts at 0.
+             * <to_byte> is a positive integer representing the range end (aka upper bound), i.e., the last byte of the chunk compared to the total bytes composing the full video source.
+             * <total_bytes> is a positive integer representing the total bytes composing the full video source. It can also be * if or as long as it is unknown. Technically, this value is required only one time and cannot differ in several requests.
+            * If you split your file by part (recommended option),
+            * If you split your file by parts (recommended option), the `Content-Range` header value must match the following pattern: `part <part>/<total_parts>`:
+             * `<part>` is a positive integer representing the part number. The first sequential part number is always 1.
+             * `<total_parts>` is a positive integer representing the total parts of the video source. It can also be `*` if or as long as it is unknown. Technically, this value is required only one time and cannot differ in several requests.
           required: false
           style: simple
           explode: false
