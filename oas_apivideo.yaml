@@ -587,7 +587,8 @@ paths:
         - Videos
       summary: Upload a video
       description: |-
-        To upload a video to the videoId you created. Replace {videoId} with the id you'd like to use, {access_token} with your token, and /path/to/video.mp4 with the path to the video you'd like to upload. You can only upload your video to the videoId once.\nWe offer 2 types of upload: 
+        To upload a video to the videoId you created. Replace {videoId} with the id you'd like to use, {access_token} with your token, and /path/to/video.mp4 with the path to the video you'd like to upload. You can only upload your video to the videoId once.
+        We offer 2 types of upload: 
         * Regular upload 
         * Progressive upload
         The latter allows you to split a video source into X chunks and send those chunks independently (concurrently or sequentially). The 2 main goals for our users are to
