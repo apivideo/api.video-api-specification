@@ -3976,9 +3976,9 @@ paths:
     get:
       tags:
         - Player Themes
-      summary: List all players
+      summary: List all player themes
       description: |-
-        Retrieve a list of all the players you created, as well as details about each one.
+        Retrieve a list of all the player themes you created, as well as details about each one.
         Tutorials that use the [player endpoint](https://api.video/blog/endpoints/player).
       operationId: GET_players
       parameters:
@@ -3991,6 +3991,7 @@ paths:
           schema:
             type: string
             enum:
+              - name
               - createdAt
               - updatedAt
           example: createdAt
@@ -5829,7 +5830,6 @@ components:
           example: true
       required:
         - videoId
-        - title
       example:
         videoId: vi4k0jvEUuaTdRAEjQ4Jfrgz
         title: Maths video
@@ -5852,6 +5852,9 @@ components:
     player-theme:
       type: object
       properties:
+        name:
+          type: string
+          description: 'The name of the player theme'
         text:
           type: string
           description: 'RGBA color for timer text. Default: rgba(255, 255, 255, 1)'
@@ -5936,6 +5939,10 @@ components:
       title: PlayerThemeCreationPayload
       type: object
       properties:
+        name:
+          type: string
+          maxLength: 100
+          description: 'Add a name for your player theme here.'
         text:
           type: string
           description: 'RGBA color for timer text. Default: rgba(255, 255, 255, 1)'
@@ -5992,6 +5999,7 @@ components:
           description: 'enable/disable looping. Default: false'
           default: false
       example:
+        name: My nice theme
         assets:
           logo: https://cdn.api.video/player/pl14Db6oMJRH6SRVoOwORacK/logo.png
           link: https://api.video
@@ -6020,6 +6028,10 @@ components:
       title: PlayerThemeUpdatePayload
       type: object
       properties:
+        name:
+          type: string
+          maxLength: 100
+          description: 'Add a name for your player theme here.'
         text:
           type: string
           description: 'RGBA color for timer text. Default: rgba(255, 255, 255, 1)'
