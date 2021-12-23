@@ -1,0 +1,12 @@
+name: Update readme.io staging documentation
+on: [push]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: readmeio/github-readme-sync@v2
+        with:
+          readme-oas-key: ${{ secrets.README_IO_API_KEY }}:61c45f254cc5ea002c06c108
+          oas-file-path: oas_apivideo.yaml
+          api-version: 2.0-staging
