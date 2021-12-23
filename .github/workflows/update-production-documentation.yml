@@ -1,0 +1,15 @@
+name: Update readme.io production documentation
+on:
+  push:
+    branches:
+      - master
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: readmeio/github-readme-sync@v2
+        with:
+          readme-oas-key: ${{ secrets.README_IO_API_KEY }}:6197b9473209fd00263fa0c9
+          oas-file-path: oas_apivideo.yaml
+          api-version: 2.0
