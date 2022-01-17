@@ -6682,7 +6682,7 @@ components:
           items:
             $ref: '#/components/schemas/metadata'
         clip:
-          description: Create a "trimmed video" from a new or an existing source by specifying a startTimecode and/or an endTimecode parameter. Select the video you would like to clip: in the `source` param above, mention either the URL to the video or the `videoId` if this video is already hosted on your api.video account.
+          description: "Create a \"trimmed video\" from a new or an existing source by specifying a startTimecode and/or an endTimecode parameter. Select the video you would like to clip: in the `source` param above, mention either the URL to the video or the `videoId` if this video is already hosted on your api.video account."
           $ref: '#/components/schemas/video-clip'
         watermark:
           $ref: '#/components/schemas/video-watermark'
