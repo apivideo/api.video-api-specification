@@ -6648,7 +6648,7 @@ components:
           example: A video about string theory.
         source:
           type: string
-          description: If you add a video already on the web, this is where you enter the url for the video. Also, if you want to create a clip from a video you already uploaded on your api.video account, you can enter the `videoId` of the existing video. For more info, check the `clip` param below.
+          description: You can either add a video already on the web, by entering the URL of the video, or you can also enter the `videoId` of one of the videos your already have on your api.video acccount, and this will generate a copy of your video. Creating a copy of a video can be especially useful if you want to keep your original video an trim or apply a watermark onto the copy you would create.
           example: https://www.myvideo.url.com/video.mp4 OR vi4k0jvEUuaTdRAEjQ4JfOyl
         public:
           type: boolean
