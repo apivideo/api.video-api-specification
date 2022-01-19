@@ -864,7 +864,7 @@ paths:
       tags:
         - Watermarks
       summary: List all watermarks
-      description: List all watermarks. A watermark is a static image, directly burnt into a video.
+      description: List all watermarks. A watermark is a static image, directly burnt into a video. After you have created your watermark, you can define its placement and aspect when you [create a video](https://docs.api.video/reference/post-video).  
       operationId: LIST-watermarks
       x-client-action: list
       parameters:
@@ -948,7 +948,7 @@ paths:
       tags:
         - Watermarks
       summary: Upload a watermark
-      description: Create a new watermark by uploading a `.jpg` or a `.png` image. A watermark is a static image, directly burnt into a video.
+      description: Create a new watermark by uploading a `JPG` or a `PNG` image. A watermark is a static image, directly burnt into a video. After you have created your watermark, you can define its placement and aspect when you [create a video](https://docs.api.video/reference/post-video).
       operationId: POST_watermark
       requestBody:
         required: true
@@ -6685,6 +6685,7 @@ components:
           description: "Create a \"trimmed video\" from a new or an existing source by specifying a startTimecode and/or an endTimecode parameter. Select the video you would like to clip: in the `source` param above, mention either the URL to the video or the `videoId` if this video is already hosted on your api.video account."
           $ref: '#/components/schemas/video-clip'
         watermark:
+        description: Specify the use of a given watermark. You can position it based on CSS inspired attributes. See the specification for [creating a watermark](https://docs.api.video/reference/post_watermark).
           $ref: '#/components/schemas/video-watermark'
       example:
         title: Maths video
