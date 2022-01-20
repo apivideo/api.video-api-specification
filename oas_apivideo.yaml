@@ -860,6 +860,58 @@ paths:
               }
 
   /watermarks:
+    post:
+      tags:
+        - Watermarks
+      summary: Upload a watermark
+      description: Create a new watermark by uploading a `JPG` or a `PNG` image. A watermark is a static image, directly burnt into a video. After you have created your watermark, you can define its placement and aspect when you [create a video](https://docs.api.video/reference/post-video).
+      operationId: POST_watermark
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/watermark-upload-payload'
+      responses:
+        "200":
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/watermark'
+              examples:
+                response:
+                  value:
+                    watermarkId: watermark_1BWr2L5MTQwxGkuxKjzh6i
+                    createdAt: 2020-03-03T12:52:03.085+00:00
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/bad-request'
+              examples:
+                response:
+                  value:
+                    status: 400
+                    type: https://docs.api.video/docs/fileextension
+                    title: Only [jpeg, jpg, JPG, JPEG, png, PNG] extensions are supported.
+                    name: file
+      security:
+        - bearerAuth: []
+      x-client-action: upload
+      x-readme:
+        code-samples:
+          - language: go
+            code: "//install the Go API client\n//go get github.com/apivideo/api.video-go-client\n\npackage main\n\nimport (\n    \"context\"\n    \"fmt\"\n    \"os\"\n    apivideosdk \"github.com/apivideo/api.video-go-client\"\n)\n\nfunc main() {\n    client := apivideosdk.ClientBuilder(\"YOUR_API_TOKEN\").Build()\n    // if you rather like to use the sandbox environment:\n    // client := apivideosdk.SandboxClientBuilder(\"YOU_SANDBOX_API_TOKEN\").Build()\n\n    videoId := \"videoId_example\" // string | Unique identifier of the chosen video \n    file := os.NewFile(1234, \"some_file\") // *os.File | The `.jpg` image to be added as a thumbnail.\n\n\n    res, err := client.Videos.UploadThumbnailFile(videoId, file)\n\n    // you can also use a Reader instead of a File:\n    // client.Videos.UploadThumbnail(videoId, fileName, fileReader)\n\n    if err != nil {\n        fmt.Fprintf(os.Stderr, \"Error when calling `Videos.UploadThumbnail``: %v\\n\", err)\n    }\n    // response from `UploadThumbnail`: Video\n    fmt.Fprintf(os.Stdout, \"Response from `Videos.UploadThumbnail`: %v\\n\", res)\n}\n"
+          - language: node
+            code: "//install the module with npm or yarn\n//npm install @api.video/nodejs-client --save\n//yarn add @api.video/nodejs-client\n(async () => {\n    try {\n        const client = new ApiVideoClient({ apiKey: \"YOUR_API_TOKEN\" });\n\n        const videoId = 'videoId_example'; // Unique identifier of the chosen video \n        const file = 'BINARY_DATA_HERE'; // The `.jpg` image to be added as a thumbnail.\n\n        // Video\n        const result = await client.videos.uploadThumbnail(videoId, file);\n        console.log(result);\n    } catch (e) {\n        console.error(e);\n    }\n})();\n"
+          - language: python
+            code: "#install the api.video API client library\n#pip install api.video\n\nimport apivideo\nfrom apivideo.api import videos_api\nfrom apivideo.model.bad_request import BadRequest\nfrom apivideo.model.not_found import NotFound\nfrom apivideo.model.video import Video\nfrom pprint import pprint\n\n# Enter a context with an instance of the API client\nwith apivideo.AuthenticatedApiClient(__API_KEY__) as api_client:\n    # Create an instance of the API class\n    api_instance = videos_api.VideosApi(api_client)\n    video_id = \"videoId_example\" # str | Unique identifier of the chosen video \n    file = open('/path/to/file', 'rb') # file_type | The `.jpg` image to be added as a thumbnail.\n\n    # example passing only required values which don't have defaults set\n    try:\n        # Upload a thumbnail\n        api_response = api_instance.upload_thumbnail(video_id, file)\n        pprint(api_response)\n    except apivideo.ApiException as e:\n        print(\"Exception when calling VideosApi->upload_thumbnail: %s\\n\" % e)\n"
+          - language: java
+            code: "//dependency addition instructions\n//https://github.com/apivideo/api.video-java-client\n// Import classes:\nimport video.api.client.ApiVideoClient;\nimport video.api.client.api.ApiException;\nimport video.api.client.api.models.*;\nimport video.api.client.api.clients.VideosApi;\nimport java.util.*;\n\npublic class Example {\n public static void main(String[] args) {\n   ApiVideoClient client = new ApiVideoClient(\"YOUR_API_TOKEN\");\n   // if you rather like to use the sandbox environment:\n   // ApiVideoClient client = new ApiVideoClient(\"YOU_SANDBOX_API_TOKEN\", ApiVideoClient.Environment.SANDBOX);\n\n   VideosApi apiInstance = client.videos();\n\n   String videoId = \"videoId_example\"; // Unique identifier of the chosen video \n   File file = new File(\"/path/to/file\"); // The `.jpg` image to be added as a thumbnail.\n\n   try {\n     Video result = apiInstance.uploadThumbnail(videoId, file);\n     System.out.println(result);\n   } catch (ApiException e) {\n     System.err.println(\"Exception when calling VideosApi#uploadThumbnail\");\n     System.err.println(\"Status code: \" + e.getCode());\n     System.err.println(\"Reason: \" + e.getMessage());\n     System.err.println(\"Response headers: \" + e.getResponseHeaders());\n     e.printStackTrace();\n   }\n }\n}\n"
+          - language: csharp
+            code: "//install via Nuget\n//Install-Package ApiVideo\n\nusing System.Diagnostics;\nusing ApiVideo.Client;\n\nnamespace Example\n{\n    public class uploadThumbnailExample\n    {\n        public static void Main()\n        {\n            var basePath = ApiVideoClient.Client.Environment.SANDBOX;\n            var apiKey = \"YOUR_API_KEY\";\n\n            var apiInstance = new ApiVideoClient(apiKey,basePath);\n\n            var videoId = videoId_example;  // string | Unique identifier of the chosen video \n            var file = BINARY_DATA_HERE;  // System.IO.Stream | The `.jpg` image to be added as a thumbnail.\n            var apiVideosInstance = apiInstance.Videos();\n            try\n            {\n                // Upload a thumbnail\n                Video result = apiVideosInstance.uploadThumbnail(videoId, file);\n                Debug.WriteLine(result);\n            }\n            catch (ApiException  e)\n            {\n                Debug.Print(\"Exception when calling VideosApi.uploadThumbnail: \" + e.Message );\n                Debug.Print(\"Status Code: \"+ e.ErrorCode);\n                Debug.Print(e.StackTrace);\n            }\n        }\n    }\n}\n"
     get:
       tags:
         - Watermarks
@@ -944,58 +996,7 @@ paths:
         - bearerAuth: []
       x-group-parameters: true
       x-client-paginated: true
-    post:
-      tags:
-        - Watermarks
-      summary: Upload a watermark
-      description: Create a new watermark by uploading a `JPG` or a `PNG` image. A watermark is a static image, directly burnt into a video. After you have created your watermark, you can define its placement and aspect when you [create a video](https://docs.api.video/reference/post-video).
-      operationId: POST_watermark
-      requestBody:
-        required: true
-        content:
-          multipart/form-data:
-            schema:
-              $ref: '#/components/schemas/watermark-upload-payload'
-      responses:
-        "200":
-          description: Success
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/watermark'
-              examples:
-                response:
-                  value:
-                    watermarkId: watermark_1BWr2L5MTQwxGkuxKjzh6i
-                    createdAt: 2020-03-03T12:52:03.085+00:00
-        "400":
-          description: Bad Request
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/bad-request'
-              examples:
-                response:
-                  value:
-                    status: 400
-                    type: https://docs.api.video/docs/fileextension
-                    title: Only [jpeg, jpg, JPG, JPEG, png, PNG] extensions are supported.
-                    name: file
-      security:
-        - bearerAuth: []
-      x-client-action: upload
-      x-readme:
-        code-samples:
-          - language: go
-            code: "//install the Go API client\n//go get github.com/apivideo/api.video-go-client\n\npackage main\n\nimport (\n    \"context\"\n    \"fmt\"\n    \"os\"\n    apivideosdk \"github.com/apivideo/api.video-go-client\"\n)\n\nfunc main() {\n    client := apivideosdk.ClientBuilder(\"YOUR_API_TOKEN\").Build()\n    // if you rather like to use the sandbox environment:\n    // client := apivideosdk.SandboxClientBuilder(\"YOU_SANDBOX_API_TOKEN\").Build()\n\n    videoId := \"videoId_example\" // string | Unique identifier of the chosen video \n    file := os.NewFile(1234, \"some_file\") // *os.File | The `.jpg` image to be added as a thumbnail.\n\n\n    res, err := client.Videos.UploadThumbnailFile(videoId, file)\n\n    // you can also use a Reader instead of a File:\n    // client.Videos.UploadThumbnail(videoId, fileName, fileReader)\n\n    if err != nil {\n        fmt.Fprintf(os.Stderr, \"Error when calling `Videos.UploadThumbnail``: %v\\n\", err)\n    }\n    // response from `UploadThumbnail`: Video\n    fmt.Fprintf(os.Stdout, \"Response from `Videos.UploadThumbnail`: %v\\n\", res)\n}\n"
-          - language: node
-            code: "//install the module with npm or yarn\n//npm install @api.video/nodejs-client --save\n//yarn add @api.video/nodejs-client\n(async () => {\n    try {\n        const client = new ApiVideoClient({ apiKey: \"YOUR_API_TOKEN\" });\n\n        const videoId = 'videoId_example'; // Unique identifier of the chosen video \n        const file = 'BINARY_DATA_HERE'; // The `.jpg` image to be added as a thumbnail.\n\n        // Video\n        const result = await client.videos.uploadThumbnail(videoId, file);\n        console.log(result);\n    } catch (e) {\n        console.error(e);\n    }\n})();\n"
-          - language: python
-            code: "#install the api.video API client library\n#pip install api.video\n\nimport apivideo\nfrom apivideo.api import videos_api\nfrom apivideo.model.bad_request import BadRequest\nfrom apivideo.model.not_found import NotFound\nfrom apivideo.model.video import Video\nfrom pprint import pprint\n\n# Enter a context with an instance of the API client\nwith apivideo.AuthenticatedApiClient(__API_KEY__) as api_client:\n    # Create an instance of the API class\n    api_instance = videos_api.VideosApi(api_client)\n    video_id = \"videoId_example\" # str | Unique identifier of the chosen video \n    file = open('/path/to/file', 'rb') # file_type | The `.jpg` image to be added as a thumbnail.\n\n    # example passing only required values which don't have defaults set\n    try:\n        # Upload a thumbnail\n        api_response = api_instance.upload_thumbnail(video_id, file)\n        pprint(api_response)\n    except apivideo.ApiException as e:\n        print(\"Exception when calling VideosApi->upload_thumbnail: %s\\n\" % e)\n"
-          - language: java
-            code: "//dependency addition instructions\n//https://github.com/apivideo/api.video-java-client\n// Import classes:\nimport video.api.client.ApiVideoClient;\nimport video.api.client.api.ApiException;\nimport video.api.client.api.models.*;\nimport video.api.client.api.clients.VideosApi;\nimport java.util.*;\n\npublic class Example {\n public static void main(String[] args) {\n   ApiVideoClient client = new ApiVideoClient(\"YOUR_API_TOKEN\");\n   // if you rather like to use the sandbox environment:\n   // ApiVideoClient client = new ApiVideoClient(\"YOU_SANDBOX_API_TOKEN\", ApiVideoClient.Environment.SANDBOX);\n\n   VideosApi apiInstance = client.videos();\n\n   String videoId = \"videoId_example\"; // Unique identifier of the chosen video \n   File file = new File(\"/path/to/file\"); // The `.jpg` image to be added as a thumbnail.\n\n   try {\n     Video result = apiInstance.uploadThumbnail(videoId, file);\n     System.out.println(result);\n   } catch (ApiException e) {\n     System.err.println(\"Exception when calling VideosApi#uploadThumbnail\");\n     System.err.println(\"Status code: \" + e.getCode());\n     System.err.println(\"Reason: \" + e.getMessage());\n     System.err.println(\"Response headers: \" + e.getResponseHeaders());\n     e.printStackTrace();\n   }\n }\n}\n"
-          - language: csharp
-            code: "//install via Nuget\n//Install-Package ApiVideo\n\nusing System.Diagnostics;\nusing ApiVideo.Client;\n\nnamespace Example\n{\n    public class uploadThumbnailExample\n    {\n        public static void Main()\n        {\n            var basePath = ApiVideoClient.Client.Environment.SANDBOX;\n            var apiKey = \"YOUR_API_KEY\";\n\n            var apiInstance = new ApiVideoClient(apiKey,basePath);\n\n            var videoId = videoId_example;  // string | Unique identifier of the chosen video \n            var file = BINARY_DATA_HERE;  // System.IO.Stream | The `.jpg` image to be added as a thumbnail.\n            var apiVideosInstance = apiInstance.Videos();\n            try\n            {\n                // Upload a thumbnail\n                Video result = apiVideosInstance.uploadThumbnail(videoId, file);\n                Debug.WriteLine(result);\n            }\n            catch (ApiException  e)\n            {\n                Debug.Print(\"Exception when calling VideosApi.uploadThumbnail: \" + e.Message );\n                Debug.Print(\"Status Code: \"+ e.ErrorCode);\n                Debug.Print(e.StackTrace);\n            }\n        }\n    }\n}\n"
+  
   /watermarks/{watermarkId}:
     delete:
       tags:
