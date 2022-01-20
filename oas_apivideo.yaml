@@ -6685,7 +6685,7 @@ components:
           description: "Create a \"trimmed video\" from a new or an existing source by specifying a startTimecode and/or an endTimecode parameter. Select the video you would like to clip: in the `source` param above, mention either the URL to the video or the `videoId` if this video is already hosted on your api.video account."
           $ref: '#/components/schemas/video-clip'
         watermark:
-        description: Specify the use of a given watermark. You can position it based on CSS inspired attributes. See the specification for [creating a watermark](https://docs.api.video/reference/post_watermark).
+          description: Specify the use of a given watermark. You can position it based on CSS inspired attributes. See the specification for [creating a watermark](https://docs.api.video/reference/post_watermark).
           $ref: '#/components/schemas/video-watermark'
       example:
         title: Maths video
