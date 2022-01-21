@@ -1058,33 +1058,26 @@ paths:
               package main
               
               import (
-                  \"context\"
-                  \"fmt\"
-                  \"os\"
-                  apivideosdk \"github.com/apivideo/api.video-go-client\"
+                  "context"
+                  "fmt"
+                  "os"
+                  apivideosdk "github.com/apivideo/api.video-go-client"
               )
               
               func main() {
-                  client := apivideosdk.ClientBuilder(\"YOUR_API_TOKEN\").Build()
+                  client := apivideosdk.ClientBuilder("YOUR_API_TOKEN").Build()
                   // if you rather like to use the sandbox environment:
-                  // client := apivideosdk.SandboxClientBuilder(\"YOU_SANDBOX_API_TOKEN\").Build()
+                  // client := apivideosdk.SandboxClientBuilder("YOU_SANDBOX_API_TOKEN").Build()
               
-                  videoId := \"videoId_example\" // string | Unique identifier of the chosen video 
-                  file := os.NewFile(1234, \"some_file\") // *os.File | The .jpg image to be added as a thumbnail.
-              
-              
-                  res, err := client.Videos.UploadThumbnailFile(videoId, file)
-              
-                  // you can also use a Reader instead of a File:
-                  // client.Videos.UploadThumbnail(videoId, fileName, fileReader)
+                  file, _ := os.Open("./watermark.jpg")
+                  
+                  res, err := client.Watermarks.UploadFile(file)
               
                   if err != nil {
-                      fmt.Fprintf(os.Stderr, \"Error when calling `Videos.UploadThumbnail``: %v\
-              \", err)
+                      fmt.Fprintf(os.Stderr, "Error when calling `Watermarks.UploadFile``: %v", err)
                   }
-                  // response from `UploadThumbnail`: Video
-                  fmt.Fprintf(os.Stdout, \"Response from `Videos.UploadThumbnail`: %v\
-              \", res)
+                  // response from `UploadFile`: Watermark
+                  fmt.Fprintf(os.Stdout, "Response from `Watermarks.UploadFile`: %v", res)
               }
               
           - language: node
@@ -1096,17 +1089,56 @@ paths:
                   try {
                       const client = new ApiVideoClient({ apiKey: \"YOUR_API_TOKEN\" });
               
-                      const videoId = 'videoId_example'; // Unique identifier of the chosen video 
-                      const file = 'BINARY_DATA_HERE'; // The .jpg image to be added as a thumbnail.
-              
-                      // Video
-                      const result = await client.videos.uploadThumbnail(videoId, file);
-                      console.log(result);
+                      // Upload a watermark
+                      const watermark = await client.watermarks.upload('test/data/test.jpg');
+                      
+                      // create a video with watermark
+                      const watermarkVideo = await client.videos.create({
+                        title: 'Nodejs - watermark',
+                        watermark: {
+                          id: watermark.watermarkId,
+                          top: '0px',
+                          left: '0px',
+                          width: '100px',
+                          height: '100px',
+                        },
+                      });
+
                   } catch (e) {
                       console.error(e);
                   }
               })();
-              
+          - language: php
+            code: |
+              <?php
+                use ApiVideo\Client\Model\VideoCreationPayload;
+                use ApiVideo\Client\Model\VideoWatermark;
+  
+                require __DIR__ . '/vendor/autoload.php';
+        
+                $httpClient = new \Symfony\Component\HttpClient\Psr18Client();
+                $client = new \ApiVideo\Client(
+                                    'https://sandbox.api.video',
+                                    'YOUR_API_TOKEN',
+                                    $httpClient
+                                );
+        
+                // upload the watermark
+                $watermark = $client->watermarks()->upload(new SplFileObject(__DIR__ . '/watermark.png'));
+
+                // create a new video with the watermark
+                $video = $client->videos()->create((new VideoCreationPayload())
+                        ->setWatermark((new VideoWatermark())
+                                ->setId($watermark->getWatermarkId())
+                                ->setTop("0px")
+                                ->setLeft("0px")
+                                ->setWidth("100px")
+                                ->setHeight("100px"))
+                        ->setTitle("Test PHP watermark")
+                );
+
+                // upload the video
+                $client->videos()->upload($video->getVideoId(), new SplFileObject(__DIR__ . '/558k.mp4'));
           - language: python
             code: |
               #install the api.video API client library
@@ -1116,23 +1148,21 @@ paths:
               from apivideo.api import videos_api
               from apivideo.model.bad_request import BadRequest
               from apivideo.model.not_found import NotFound
-              from apivideo.model.video import Video
               from pprint import pprint
               
               # Enter a context with an instance of the API client
               with apivideo.AuthenticatedApiClient(__API_KEY__) as api_client:
                   # Create an instance of the API class
-                  api_instance = videos_api.VideosApi(api_client)
-                  video_id = \"videoId_example\" # str | Unique identifier of the chosen video 
-                  file = open('/path/to/file', 'rb') # file_type | The .jpg image to be added as a thumbnail.
+                  api_instance = videos_api.WatermarksApi(api_client)
+                  file = open('/path/to/file', 'rb') # file_type | The watermark image.
               
                   # example passing only required values which don't have defaults set
                   try:
-                      # Upload a thumbnail
-                      api_response = api_instance.upload_thumbnail(video_id, file)
+                      # Upload a watermark
+                      api_response = api_instance.upload(file)
                       pprint(api_response)
                   except apivideo.ApiException as e:
-                      print(\"Exception when calling VideosApi->upload_thumbnail: %s\
+                      print(\"Exception when calling WatermarksApi->upload: %s\
               \" % e)
               
           - language: java
@@ -1143,7 +1173,7 @@ paths:
               import video.api.client.ApiVideoClient;
               import video.api.client.api.ApiException;
               import video.api.client.api.models.*;
-              import video.api.client.api.clients.VideosApi;
+              import video.api.client.api.clients.WatermarksApi;
               import java.util.*;
               
               public class Example {
@@ -1152,16 +1182,15 @@ paths:
                  // if you rather like to use the sandbox environment:
                  // ApiVideoClient client = new ApiVideoClient(\"YOU_SANDBOX_API_TOKEN\", ApiVideoClient.Environment.SANDBOX);
               
-                 VideosApi apiInstance = client.videos();
+                 WatermarksApi watermarkApi = apiClient.watermarks();
               
-                 String videoId = \"videoId_example\"; // Unique identifier of the chosen video 
-                 File file = new File(\"/path/to/file\"); // The .jpg image to be added as a thumbnail.
+                 File file = new File(\"/path/to/file\"); // The watermark image.
               
                  try {
-                   Video result = apiInstance.uploadThumbnail(videoId, file);
+                   Watermark result = watermarkApi.upload(file);
                    System.out.println(result);
                  } catch (ApiException e) {
-                   System.err.println(\"Exception when calling VideosApi#uploadThumbnail\");
+                   System.err.println(\"Exception when calling WatermarksApi#upload\");
                    System.err.println(\"Status code: \" + e.getCode());
                    System.err.println(\"Reason: \" + e.getMessage());
                    System.err.println(\"Response headers: \" + e.getResponseHeaders());
@@ -1180,7 +1209,7 @@ paths:
               
               namespace Example
               {
-                  public class uploadThumbnailExample
+                  public class uploadWatermarkExample
                   {
                       public static void Main()
                       {
@@ -1189,18 +1218,18 @@ paths:
               
                           var apiInstance = new ApiVideoClient(apiKey,basePath);
               
-                          var videoId = videoId_example;  // string | Unique identifier of the chosen video 
-                          var file = BINARY_DATA_HERE;  // System.IO.Stream | The .jpg image to be added as a thumbnail.
-                          var apiVideosInstance = apiInstance.Videos();
+                          var file = File.OpenRead("watermark.jpg");  // The watermark image.
+                          var apiWatermarksInstance = apiInstance.Watermarks();
+              
                           try
                           {
-                              // Upload a thumbnail
-                              Video result = apiVideosInstance.uploadThumbnail(videoId, file);
+                              // Upload a watermark
+                              Video result = apiWatermarksInstance.upload(videoId, file);
                               Debug.WriteLine(result);
                           }
                           catch (ApiException  e)
                           {
-                              Debug.Print(\"Exception when calling VideosApi.uploadThumbnail: \" + e.Message );
+                              Debug.Print(\"Exception when calling WatermarksApi.upload: \" + e.Message );
                               Debug.Print(\"Status Code: \"+ e.ErrorCode);
                               Debug.Print(e.StackTrace);
                           }
@@ -11797,4 +11826,5 @@ x-readme:
     - node
     - php
     - python
+
 
