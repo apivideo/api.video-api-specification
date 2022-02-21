@@ -9677,7 +9677,7 @@ paths:
               
                       const webhooksCreationPayload = {
                     events: [\"video.encoding.quality.completed\"], // A list of the webhooks that you are subscribing to. There are Currently four webhook options: * ```video.encoding.quality.completed```  When a new video is uploaded into your account, it will be encoded into several different HLS sizes/bitrates.  When each version is encoded, your webhook will get a notification.  It will look like ```{ \\\\\\\"type\\\\\\\": \\\\\\\"video.encoding.quality.completed\\\\\\\", \\\\\\\"emittedAt\\\\\\\": \\\\\\\"2021-01-29T16:46:25.217+01:00\\\\\\\", \\\\\\\"videoId\\\\\\\": \\\\\\\"viXXXXXXXX\\\\\\\", \\\\\\\"encoding\\\\\\\": \\\\\\\"hls\\\\\\\", \\\\\\\"quality\\\\\\\": \\\\\\\"720p\\\\\\\"} ```. This request says that the 720p HLS encoding was completed. * ```live-stream.broadcast.started```  When a livestream begins broadcasting, the broadcasting parameter changes from false to true, and this webhook fires. * ```live-stream.broadcast.ended```  This event fores when the livestream has finished broadcasting, and the broadcasting parameter flips from false to true. * ```video.source.recorded```  This event is similar to ```video.encoding.quality.completed```, but tells you if a livestream has been recorded as a VOD.
-                    url: \"https://example.com/webhooks\", // The the url to which HTTP notifications are sent. It could be any http or https URL.
+                    url: \"https://example.com/webhooks\", // The url to which HTTP notifications are sent. It could be any http or https URL.
                   }; 
               
                       // Webhook
@@ -11000,7 +11000,7 @@ components:
           description: "Create a \"trimmed video\" from a new or an existing source by specifying a startTimecode and/or an endTimecode parameter. Select the video you would like to clip: in the `source` param above, mention either the URL to the video or the `videoId` if this video is already hosted on your api.video account."
           $ref: '#/components/schemas/video-clip'
         watermark:
-          description: Specify the use of a given watermark. You can position it based on CSS inspired attributes. See the specification for [creating a watermark](https://docs.api.video/reference/post_watermark).
+          description: "Specify the use of a given watermark. You can position it based on CSS inspired attributes. If the video you want to watermark is already hosted on your api.video account, select the video you would like to apply a watermark to: in the `source` param above, mention either the URL to the video or its `videoId`. See the specification for [creating a watermark](https://docs.api.video/reference/post_watermark)."
           $ref: '#/components/schemas/video-watermark'
       example:
         title: Maths video
@@ -11419,11 +11419,11 @@ components:
         width:
           type: string
           description: "Width of the watermark-image relative to the video if expressed in %. Otherwise a fixed width. NOTE: To keep intrinsic watermark-image width use initial"
-          example: 50%
+          example: initial
         height:
           type: string
           description: "Width of the watermark-image relative to the video if expressed in %. Otherwise a fixed height. NOTE: To keep intrinsic watermark-image height use initial"
-          example: 50%
+          example: initial
         opacity:
           type: string
           description: Opacity expressed in % only to specify the degree of the watermark-image transparency with the video.
