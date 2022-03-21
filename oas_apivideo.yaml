@@ -1466,7 +1466,7 @@ paths:
                   // client := apivideosdk.SandboxClientBuilder(\"YOU_SANDBOX_API_TOKEN\").Build()
               
                   videoId := \"videoId_example\" // string | Unique identifier of the chosen video 
-                  file := os.NewFile(1234, \"some_file\") // *os.File | The .jpg image to be added as a thumbnail.
+                  file := os.NewFile(1234, \"some_file\") // *os.File | The image to be added as a thumbnail. The image to be added as a thumbnail.
               
               
                   res, err := client.Videos.UploadThumbnailFile(videoId, file)
@@ -1493,7 +1493,7 @@ paths:
                       const client = new ApiVideoClient({ apiKey: \"YOUR_API_TOKEN\" });
               
                       const videoId = 'videoId_example'; // Unique identifier of the chosen video 
-                      const file = 'BINARY_DATA_HERE'; // The .jpg image to be added as a thumbnail.
+                      const file = 'BINARY_DATA_HERE'; // The image to be added as a thumbnail.
               
                       // Video
                       const result = await client.videos.uploadThumbnail(videoId, file);
@@ -1520,7 +1520,7 @@ paths:
                   # Create an instance of the API class
                   api_instance = videos_api.VideosApi(api_client)
                   video_id = \"videoId_example\" # str | Unique identifier of the chosen video 
-                  file = open('/path/to/file', 'rb') # file_type | The .jpg image to be added as a thumbnail.
+                  file = open('/path/to/file', 'rb') # file_type | The image to be added as a thumbnail.
               
                   # example passing only required values which don't have defaults set
                   try:
@@ -1551,7 +1551,7 @@ paths:
                  VideosApi apiInstance = client.videos();
               
                  String videoId = \"videoId_example\"; // Unique identifier of the chosen video 
-                 File file = new File(\"/path/to/file\"); // The .jpg image to be added as a thumbnail.
+                 File file = new File(\"/path/to/file\"); // The image to be added as a thumbnail.
               
                  try {
                    Video result = apiInstance.uploadThumbnail(videoId, file);
@@ -1586,7 +1586,7 @@ paths:
                           var apiInstance = new ApiVideoClient(apiKey,basePath);
               
                           var videoId = videoId_example;  // string | Unique identifier of the chosen video 
-                          var file = BINARY_DATA_HERE;  // System.IO.Stream | The .jpg image to be added as a thumbnail.
+                          var file = BINARY_DATA_HERE;  // System.IO.Stream | The image to be added as a thumbnail.
                           var apiVideosInstance = apiInstance.Videos();
                           try
                           {
@@ -4747,7 +4747,7 @@ paths:
                   // client := apivideosdk.SandboxClientBuilder(\"YOU_SANDBOX_API_TOKEN\").Build()
                       
                   liveStreamId := \"vi4k0jvEUuaTdRAEjQ4Jfrgz\" // string | The unique ID for the live stream you want to upload.
-                  file := os.NewFile(1234, \"some_file\") // *os.File | The .jpg image to be added as a thumbnail.
+                  file := os.NewFile(1234, \"some_file\") // *os.File | The image to be added as a thumbnail.
               
                   
                   res, err := client.LiveStreams.UploadThumbnailFile(liveStreamId, file)
@@ -4774,7 +4774,7 @@ paths:
                       const client = new ApiVideoClient({ apiKey: "YOUR_API_TOKEN" });
 
                       const liveStreamId = 'vi4k0jvEUuaTdRAEjQ4Jfrgz'; // The unique ID for the live stream you want to upload.
-                      const file = 'BINARY_DATA_HERE'; // The .jpg image to be added as a thumbnail.
+                      const file = 'BINARY_DATA_HERE'; // The image to be added as a thumbnail.
 
                       // LiveStream
                       const result = await client.liveStreams.uploadThumbnail(liveStreamId, file);
@@ -4799,7 +4799,7 @@ paths:
                   # Create an instance of the API class
                   api_instance = live_streams_api.LiveStreamsApi(api_client)
                   live_stream_id = "vi4k0jvEUuaTdRAEjQ4Jfrgz" # str | The unique ID for the live stream you want to upload.
-                  file = open('/path/to/file', 'rb') # file_type | The .jpg image to be added as a thumbnail.
+                  file = open('/path/to/file', 'rb') # file_type | The image to be added as a thumbnail.
 
                   # example passing only required values which don't have defaults set
                   try:
@@ -4828,7 +4828,7 @@ paths:
                   LiveStreamsApi apiInstance = client.liveStreams();
                   
                   String liveStreamId = \"vi4k0jvEUuaTdRAEjQ4Jfrgz\"; // The unique ID for the live stream you want to upload.
-                  File file = new File(\"/path/to/file\"); // The .jpg image to be added as a thumbnail.
+                  File file = new File(\"/path/to/file\"); // The image to be added as a thumbnail.
               
                   try {
                     LiveStream result = apiInstance.uploadThumbnail(liveStreamId, file);
@@ -4862,7 +4862,7 @@ paths:
                           var apiInstance = new ApiVideoClient(apiKey,basePath);
 
                           var liveStreamId = vi4k0jvEUuaTdRAEjQ4Jfrgz;  // string | The unique ID for the live stream you want to upload.
-                          var file = BINARY_DATA_HERE;  // System.IO.Stream | The .jpg image to be added as a thumbnail.
+                          var file = BINARY_DATA_HERE;  // System.IO.Stream | The image to be added as a thumbnail.
                           var apiLiveStreamsInstance = apiInstance.LiveStreams();
                           try
                           {
@@ -11055,7 +11055,7 @@ components:
       properties:
         file:
           type: string
-          description: The `.jpg` image to be added as a thumbnail.
+          description: The mime type should be image/jpeg, image/png or image/webp. The max allowed size is 8 MiB.
           format: binary
     video-update-payload:
       title: VideoUpdatePayload
@@ -11223,7 +11223,6 @@ components:
           type: string
           description: The video text track (VTT) you want to upload.
           format: binary
-          example: 'https://cdn.api.video/vod/vi3N6cDinStg3oBbN79GklWS/captions/en.vtt'
     live-stream-thumbnail-upload-payload:
       title: LiveStreamThumbnailUploadPayload
       required:
@@ -11232,9 +11231,8 @@ components:
       properties:
         file:
           type: string
-          description: The `.jpg` image to be added as a thumbnail.
+          description: The mime type should be image/jpeg, image/png or image/webp. The max allowed size is 8 MiB.
           format: binary
-          example: 'https://cdn.api.video/vod/vi3N6cDinStg3oBbN79GklWS/captions/en.vtt'
     captions-update-payload:
       title: CaptionsUpdatePayload
       type: object
