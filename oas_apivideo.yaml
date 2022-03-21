@@ -1466,7 +1466,7 @@ paths:
                   // client := apivideosdk.SandboxClientBuilder(\"YOU_SANDBOX_API_TOKEN\").Build()
               
                   videoId := \"videoId_example\" // string | Unique identifier of the chosen video 
-                  file := os.NewFile(1234, \"some_file\") // *os.File | The image to be added as a thumbnail. The image to be added as a thumbnail.
+                  file := os.NewFile(1234, \"some_file\") // *os.File | The image to be added as a thumbnail.
               
               
                   res, err := client.Videos.UploadThumbnailFile(videoId, file)
@@ -11055,7 +11055,7 @@ components:
       properties:
         file:
           type: string
-          description: The mime type should be image/jpeg, image/png or image/webp. The max allowed size is 8 MiB.
+          description: The image to be added as a thumbnail. The mime type should be image/jpeg, image/png or image/webp. The max allowed size is 8 MiB.
           format: binary
     video-update-payload:
       title: VideoUpdatePayload
@@ -11231,7 +11231,7 @@ components:
       properties:
         file:
           type: string
-          description: The mime type should be image/jpeg, image/png or image/webp. The max allowed size is 8 MiB.
+          description: The image to be added as a thumbnail. The mime type should be image/jpeg, image/png or image/webp. The max allowed size is 8 MiB.
           format: binary
     captions-update-payload:
       title: CaptionsUpdatePayload
