@@ -270,7 +270,7 @@ paths:
                           player: https://embed.api.video/vod/vi4blUQJFrYWbaG44NChkH27
                           hls: https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/hls/manifest.m3u8
                           thumbnail: https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/thumbnail.jpg
-                          mp4: https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/mp4/1080/source.mp4
+                          mp4: https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/mp4/source.mp4
                       - videoId: vi4blUQJFrYWbaG44NChkH27
                         title: Video Title
                         description: A description for your video.
@@ -296,7 +296,7 @@ paths:
                           player: https://embed.api.video/vod/vi4blUQJFrYWbaG44NChkH27
                           hls: https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/hls/manifest.m3u8
                           thumbnail: https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/thumbnail.jpg
-                          mp4: https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/mp4/1080/source.mp4
+                          mp4: https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/mp4/source.mp4
                       - videoId: vi4blUQJFrYWbaG44NChkH27
                         playerId: pl45KFKdlddgk654dspkze
                         title: My Video Title
@@ -319,7 +319,7 @@ paths:
                           player: https://embed.api.video/vod/vi4blUQJFrYWbaG44NChkH27
                           hls: https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/hls/manifest.m3u8
                           thumbnail: https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/thumbnail.jpg
-                          mp4: https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/mp4/1080/source.mp4
+                          mp4: https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/mp4/source.mp4
                     pagination:
                       currentPage: 1
                       pageSize: 25
@@ -491,7 +491,7 @@ paths:
                       player: https://embed.api.video/vod/vi4blUQJFrYWbaG44NChkH27
                       hls: https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/hls/manifest.m3u8
                       thumbnail: https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/thumbnail.jpg
-                      mp4: https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/mp4/1080/source.mp4
+                      mp4: https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/mp4/source.mp4
         '202':
           description: Accepted
           content:
@@ -820,7 +820,7 @@ paths:
                       player: https://embed.api.video/vod/vi4blUQJFrYWbaG44NChkH27
                       hls: https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/hls/manifest.m3u8
                       thumbnail: https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/thumbnail.jpg
-                      mp4: https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/mp4/1080/source.mp4
+                      mp4: https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/mp4/source.mp4
         '400':
           description: Bad Request
           content:
@@ -1464,7 +1464,7 @@ paths:
                       player: https://embed.api.video/vod/vi4blUQJFrYWbaG44NChkH27
                       hls: https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/hls/manifest.m3u8
                       thumbnail: https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/thumbnail.jpg
-                      mp4: https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/mp4/1080/source.mp4
+                      mp4: https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/mp4/source.mp4
         '400':
           description: Bad Request
           content:
@@ -1707,7 +1707,7 @@ paths:
                       player: https://embed.api.video/vod/vi4blUQJFrYWbaG44NChkH27
                       hls: https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/hls/manifest.m3u8
                       thumbnail: https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/thumbnail.jpg
-                      mp4: https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/mp4/1080/source.mp4
+                      mp4: https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/mp4/source.mp4
         '404':
           description: Not Found
           content:
@@ -1939,7 +1939,7 @@ paths:
                       player: https://embed.api.video/vod/vi4blUQJFrYWbaG44NChkH27
                       hls: https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/hls/manifest.m3u8
                       thumbnail: https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/thumbnail.jpg
-                      mp4: https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/mp4/1080/source.mp4
+                      mp4: https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/mp4/source.mp4
         '404':
           description: Not Found
           content:
@@ -2314,7 +2314,7 @@ paths:
                       player: https://embed.api.video/vod/vi4blUQJFrYWbaG44NChkH27
                       hls: https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/hls/manifest.m3u8
                       thumbnail: https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/thumbnail.jpg
-                      mp4: https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/mp4/1080/source.mp4
+                      mp4: https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/mp4/source.mp4
         '400':
           description: Bad Request
           content:
@@ -3627,7 +3627,7 @@ paths:
                       player: https://embed.api.video/vod/vi4blUQJFrYWbaG44NChkH27
                       hls: https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/hls/manifest.m3u8
                       thumbnail: https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/thumbnail.jpg
-                      mp4: https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/mp4/1080/source.mp4
+                      mp4: https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/mp4/source.mp4
         '400':
           description: Bad Request
           content:
@@ -11490,7 +11490,7 @@ components:
           type: string
           description: Available only if mp4Support is enabled. Raw mp4 url.
           format: uri
-          example: https://cdn.api.video/vod/vi4k0jvEUuaTdRAEjQ4Jfrgz/token/8fd70443-d9f0-45d2-b01c-12c8cfc707c9/mp4/720/source.mp4
+          example: https://cdn.api.video/vod/vi4k0jvEUuaTdRAEjQ4Jfrgz/token/8fd70443-d9f0-45d2-b01c-12c8cfc707c9/mp4/source.mp4
       description: Collection of details about the video object that you can use to work with the video object.
     video-session-session:
       title: VideoSessionSession
