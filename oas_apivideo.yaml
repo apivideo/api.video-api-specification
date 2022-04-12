@@ -358,7 +358,7 @@ paths:
                           min: 10
                           max: 100
       security:
-        - bearerAuth: []
+        - apiKey: []
       x-readme:
         code-samples:
           - language: php
@@ -525,7 +525,7 @@ paths:
                         title: This attribute must be an array.
                         name: metadata
       security:
-        - bearerAuth: []
+        - apiKey: []
       x-client-action: create
       x-readme:
         code-samples:
@@ -861,7 +861,7 @@ paths:
                     name: videoId
                     status: 404
       security:
-        - bearerAuth: []
+        - apiKey: []
       x-client-action: upload
       x-client-chunk-upload: true
       x-readme:
@@ -1091,7 +1091,7 @@ paths:
                     title: Only [jpeg, jpg, JPG, JPEG, png, PNG] extensions are supported.
                     name: file
       security:
-        - bearerAuth: []
+        - apiKey: []
       x-client-action: upload
       x-readme:
         code-samples:
@@ -1359,7 +1359,7 @@ paths:
                           min: 10
                           max: 100
       security:
-        - bearerAuth: []
+        - apiKey: []
       x-group-parameters: true
       x-client-paginated: true
       x-readme:
@@ -1398,7 +1398,7 @@ paths:
                     name: watermarkId
                     status: 404
       security:
-        - bearerAuth: []
+        - apiKey: []
       x-client-action: delete
       x-readme:
         code-samples: []
@@ -1492,7 +1492,7 @@ paths:
                     name: videoId
                     status: 404
       security:
-        - bearerAuth: []
+        - apiKey: []
       x-client-action: uploadThumbnail
       x-readme:
         code-samples:
@@ -1722,7 +1722,7 @@ paths:
                     name: videoId
                     status: 404
       security:
-        - bearerAuth: []
+        - apiKey: []
       x-client-action: pickThumbnail
       x-readme:
         code-samples:
@@ -1954,7 +1954,7 @@ paths:
                     name: videoId
                     status: 404
       security:
-        - bearerAuth: []
+        - apiKey: []
       x-client-action: get
       x-readme:
         code-samples:
@@ -2131,7 +2131,7 @@ paths:
                     name: videoId
                     status: 404
       security:
-        - bearerAuth: []
+        - apiKey: []
       x-client-action: delete
       x-readme:
         code-samples:
@@ -2352,7 +2352,7 @@ paths:
                     name: videoId
                     status: 404
       security:
-        - bearerAuth: []
+        - apiKey: []
       x-client-action: update
       x-readme:
         code-samples:
@@ -2637,7 +2637,7 @@ paths:
                     name: videoId
                     status: 404
       security:
-        - bearerAuth: []
+        - apiKey: []
       x-client-action: getStatus
       x-readme:
         code-samples:
@@ -2849,7 +2849,7 @@ paths:
                         - rel: last
                           uri: /upload-tokens?currentPage=1&pageSize=25
       security:
-        - bearerAuth: []
+        - apiKey: []
       x-group-parameters: true
       x-client-paginated: true
       x-optional-object: true
@@ -3062,7 +3062,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/bad-request'
       security:
-        - bearerAuth: []
+        - apiKey: []
       x-client-action: createToken
       x-readme:
         code-samples:
@@ -3251,7 +3251,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/not-found'
       security:
-        - bearerAuth: []
+        - apiKey: []
       x-client-action: getToken
       x-readme:
         code-samples:
@@ -3421,7 +3421,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/not-found'
       security:
-        - bearerAuth: []
+        - apiKey: []
       x-client-action: deleteToken
       x-readme:
         code-samples:
@@ -3764,7 +3764,7 @@ paths:
                         - rel: last
                           uri: /live-streams?currentPage=1&pageSize=25
       security:
-        - bearerAuth: []
+        - apiKey: []
       x-client-action: list
       x-group-parameters: true
       x-client-paginated: true
@@ -3977,7 +3977,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/bad-request'
       security:
-        - bearerAuth: []
+        - apiKey: []
       x-client-action: create
       x-readme:
         code-samples:
@@ -4179,7 +4179,7 @@ paths:
                       hls: https://live.api.video/li400mYKSgQ6xs7taUeSaEKr.m3u8
                       thumbnail: https://cdn.api.video/live/li400mYKSgQ6xs7taUeSaEKr/thumbnail.jpg
       security:
-        - bearerAuth: []
+        - apiKey: []
       x-client-action: get
       x-readme:
         code-samples:
@@ -4375,7 +4375,7 @@ paths:
         '204':
           description: No Content
       security:
-        - bearerAuth: []
+        - apiKey: []
       x-client-action: delete
       x-readme:
         code-samples:
@@ -4563,7 +4563,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/bad-request'
       security:
-        - bearerAuth: []
+        - apiKey: []
       x-client-action: update
       x-readme:
         code-samples:
@@ -4787,7 +4787,7 @@ paths:
                     name: liveStreamId
                     status: 404
       security:
-        - bearerAuth: []
+        - apiKey: []
       x-client-action: uploadThumbnail
       x-readme:
         code-samples:
@@ -4977,7 +4977,7 @@ paths:
                     name: liveStreamId
                     status: 404
       security:
-        - bearerAuth: []
+        - apiKey: []
       x-client-action: deleteThumbnail
       x-readme:
         code-samples:
@@ -5171,7 +5171,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/not-found'
       security:
-        - bearerAuth: []
+        - apiKey: []
       x-client-action: get
       x-readme:
         code-samples:
@@ -5380,7 +5380,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/not-found'
       security:
-        - bearerAuth: []
+        - apiKey: []
       x-client-action: upload
       x-readme:
         code-samples:
@@ -5572,7 +5572,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/not-found'
       security:
-        - bearerAuth: []
+        - apiKey: []
       x-client-action: delete
       x-readme:
         code-samples:
@@ -5788,7 +5788,7 @@ paths:
                     name: irure mollit aute
                     status: 85925135
       security:
-        - bearerAuth: []
+        - apiKey: []
       x-client-action: update
       x-readme:
         code-samples:
@@ -6009,7 +6009,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/not-found'
       security:
-        - bearerAuth: []
+        - apiKey: []
       x-client-action: list
       x-group-parameters: true
       x-client-paginated: true
@@ -6206,7 +6206,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/not-found'
       security:
-        - bearerAuth: []
+        - apiKey: []
       x-client-action: get
       x-readme:
         code-samples:
@@ -6412,7 +6412,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/not-found'
       security:
-        - bearerAuth: []
+        - apiKey: []
       x-client-action: upload
       x-readme:
         code-samples:
@@ -6604,7 +6604,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/not-found'
       security:
-        - bearerAuth: []
+        - apiKey: []
       x-client-action: delete
       x-readme:
         code-samples:
@@ -6802,7 +6802,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/not-found'
       security:
-        - bearerAuth: []
+        - apiKey: []
       x-client-action: list
       x-group-parameters: true
       x-client-paginated: true
@@ -7075,7 +7075,7 @@ paths:
                           min: 10
                           max: 100
       security:
-        - bearerAuth: []
+        - apiKey: []
       x-client-action: list
       x-group-parameters: true
       x-client-paginated: true
@@ -7285,7 +7285,7 @@ paths:
                     hideTitle: false
                     forceLoop: false
       security:
-        - bearerAuth: []
+        - apiKey: []
       x-client-action: create
       x-readme:
         code-samples:
@@ -7534,7 +7534,7 @@ paths:
                     name: playerId
                     status: 404
       security:
-        - bearerAuth: []
+        - apiKey: []
       x-client-action: get
       x-readme:
         code-samples:
@@ -7712,7 +7712,7 @@ paths:
                     name: playerId
                     status: 404
       security:
-        - bearerAuth: []
+        - apiKey: []
       x-client-action: delete
       x-readme:
         code-samples:
@@ -7913,7 +7913,7 @@ paths:
                     name: playerId
                     status: 404
       security:
-        - bearerAuth: []
+        - apiKey: []
       x-client-action: update
       x-readme:
         code-samples:
@@ -8166,7 +8166,7 @@ paths:
                     name: playerId
                     status: 404
       security:
-        - bearerAuth: []
+        - apiKey: []
       x-client-action: uploadLogo
       x-readme:
         code-samples:
@@ -8365,7 +8365,7 @@ paths:
                     name: playerId
                     status: 404
       security:
-        - bearerAuth: []
+        - apiKey: []
       x-client-action: deleteLogo
       x-readme:
         code-samples:
@@ -8611,7 +8611,7 @@ paths:
                     name: videoId
                     status: 404
       security:
-        - bearerAuth: []
+        - apiKey: []
       x-client-action: listVideoSessions
       x-group-parameters: true
       x-client-paginated: true
@@ -8891,7 +8891,7 @@ paths:
                     name: liveStreamId
                     status: 404
       security:
-        - bearerAuth: []
+        - apiKey: []
       x-client-action: listLiveStreamSessions
       x-group-parameters: true
       x-client-paginated: true
@@ -9205,7 +9205,7 @@ paths:
                     name: videoId
                     status: 404
       security:
-        - bearerAuth: []
+        - apiKey: []
       x-client-action: listSessionEvents
       x-group-parameters: true
       x-client-paginated: true
@@ -9428,7 +9428,7 @@ paths:
                         - rel: last
                           uri: https://ws.api.video/webhooks?currentPage=1
       security:
-        - bearerAuth: []
+        - apiKey: []
       x-group-parameters: true
       x-client-paginated: true
       x-optional-object: true
@@ -9646,7 +9646,7 @@ paths:
                         title: This attribute must be an array.
                         name: events
       security:
-        - bearerAuth: []
+        - apiKey: []
       x-client-action: create
       x-readme:
         code-samples:
@@ -9833,7 +9833,7 @@ paths:
                       - video.encoding.quality.completed
                     url: http://clientnotificationserver.com/notif?myquery=query
       security:
-        - bearerAuth: []
+        - apiKey: []
       x-client-action: get
       x-readme:
         code-samples:
@@ -10008,7 +10008,7 @@ paths:
                     name: webhookId
                     status: 404
       security:
-        - bearerAuth: []
+        - apiKey: []
       x-client-action: delete
       x-readme:
         code-samples:
@@ -11819,6 +11819,9 @@ components:
     bearerAuth:
       type: http
       scheme: bearer
+    apiKey:
+      type: http
+      scheme: basic
 x-client-base-paths:
   production: https://ws.api.video
   sandbox: https://sandbox.api.video
