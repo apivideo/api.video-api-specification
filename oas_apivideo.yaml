@@ -939,6 +939,7 @@ paths:
       x-client-action: upload
       x-client-chunk-upload: true
       x-readme:
+        explorer-enabled: false
         code-samples:
           - language: go
             code: |
