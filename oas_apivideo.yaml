@@ -1695,6 +1695,7 @@ paths:
         - apiKey: []
       x-client-action: uploadThumbnail
       x-readme:
+        explorer-enabled: false
         code-samples:
           - language: go
             code: |
