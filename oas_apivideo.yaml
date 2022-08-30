@@ -9300,7 +9300,7 @@ paths:
             - For a year: 2018
             For a range period: 
             -  Date range: 2018-01-01/2018-01-15
-          required: false
+          required: true
           style: form
           explode: true
           schema:
@@ -9611,7 +9611,7 @@ paths:
             - For a year: "2018"
             For a range period: 
             -  Date range: "2018-01-01/2018-01-15"
-          required: false
+          required: true
           style: form
           explode: true
           schema:
