@@ -380,10 +380,11 @@ paths:
 
               // list all videos (all pages)
               $allVideos = [];
+              $currentPage = 1;
               do {
-                  $currentPage = $client->videos()->list([]);
-                  $allVideos = array_merge($allVideos, $currentPage->getData());
-              } while($currentPage->getPagination()->getCurrentPage() < $currentPage->getPagination()->getPagesTotal());
+                  $currentPageVideos = $client->videos()->list(['currentPage' => $currentPage++]);
+                  $allVideos = array_merge($allVideos, $currentPageVideos->getData());
+              } while($currentPage <= $currentPageVideos->getPagination()->getPagesTotal());
 
               // list videos that have all the given tags (only first results page)
               $videosWithTag = $client->videos()->list(['tags' => ['TAG2','TAG1']]);
@@ -11153,6 +11154,7 @@ components:
         publishedAt:
           type: string
           description: The date and time the API created the video. Date and time are provided using ISO-8601 UTC format.
+          format: date-time
           example: '2019-12-16T08:25:51.000Z'
         updatedAt:
           type: string
@@ -12594,6 +12596,7 @@ components:
         filesize:
           type: integer
           description: The size of your file in bytes.
+          nullable: true
           example: 200000
         receivedBytes:
           type: array
@@ -12622,29 +12625,37 @@ components:
         width:
           type: integer
           description: The width of the video in pixels.
+          nullable: true
         height:
           type: integer
           description: The height of the video in pixels.
+          nullable: true
         bitrate:
           type: number
           description: The number of bits processed per second.
+          nullable: true
         duration:
           type: integer
           description: The length of the video.
+          nullable: true
         framerate:
           type: integer
           description: The frequency with which consecutive images or frames appear on a display. Shown in this API as frames per second (fps).
+          nullable: true
           example: 60
         samplerate:
           type: integer
           description: How many samples per second a digital audio system uses to record an audio signal. The higher the rate, the higher the frequencies that can be recorded. They are presented in this API using hertz.
+          nullable: true
           example: 48000
         videoCodec:
           type: string
           description: 'The method used to compress and decompress digital video. API Video supports all codecs in the libavcodec library. '
+          nullable: true
         audioCodec:
           type: string
           description: The method used to compress and decompress digital audio for your video.
+          nullable: true
         aspectRatio:
           nullable: true
           type: string
