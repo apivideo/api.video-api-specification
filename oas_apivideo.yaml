@@ -10482,150 +10482,97 @@ paths:
       x-readme:
         code-samples:
           - language: go
-            code: |
+            code: |-
               // First install the go client with "go get github.com/apivideo/api.video-go-client"
               // Documentation: https://github.com/apivideo/api.video-go-client/blob/main/docs/WebhooksApi.md#create
 
-              package main
+              client := apivideosdk.ClientBuilder("YOUR_API_KEY").Build()
 
-              import (
-                  "context"
-                  "fmt"
-                  "os"
-                  apivideosdk "github.com/apivideo/api.video-go-client"
-              )
+              webhooksCreationPayload := *apivideosdk.NewWebhooksCreationPayload(
+                  []string{"Events_example"}, 
+                  "https://example.com/webhooks")  
 
-              func main() {
-                  client := apivideosdk.ClientBuilder("YOUR_API_KEY").Build()
-                  // if you rather like to use the sandbox environment:
-                  // client := apivideosdk.SandboxClientBuilder("YOUR_SANDBOX_API_KEY").Build()
-                      
-                  webhooksCreationPayload := *apivideosdk.NewWebhooksCreationPayload([]string{"Events_example"}, "https://example.com/webhooks") // WebhooksCreationPayload | 
 
-                  
-                  res, err := client.Webhooks.Create(webhooksCreationPayload)
+              res, err := client.Webhooks.Create(webhooksCreationPayload)
 
-                  if err != nil {
-                      fmt.Fprintf(os.Stderr, "Error when calling `Webhooks.Create``: %v\
-              ", err)
-                  }
-                  // response from `Create`: Webhook
-                  fmt.Fprintf(os.Stdout, "Response from `Webhooks.Create`: %v\
-              ", res)
+              if err != nil {
+                  fmt.Fprintf(os.Stderr, "Error when calling `Webhooks.Create``: %v", err)
               }
+
+              fmt.Fprintf(os.Stdout, "Response from `Webhooks.Create`: %v", res) 
           - language: node
             code: |-
               // First install the "@api.video/nodejs-client" npm package
               // Documentation: https://github.com/apivideo/api.video-nodejs-client/blob/main/doc/api/WebhooksApi.md#create
-
+                  
               const client = new ApiVideoClient({ apiKey: "YOUR_API_KEY" });
-
               const webhooksCreationPayload = {
-                events: ["video.encoding.quality.completed"], // A list of the webhooks that you are subscribing to. There are Currently four webhook options: * ```video.encoding.quality.completed```  Occurs when a new video is uploaded into your account, it will be encoded into several different HLS and mp4 qualities. When each version is encoded, your webhook will get a notification.  It will look like ```{ "type": "video.encoding.quality.completed", "emittedAt": "2021-01-29T16:46:25.217+01:00", "videoId": "viXXXXXXXX", "encoding": "hls", "quality": "720p"} ```. This request says that the 720p HLS encoding was completed. * ```live-stream.broadcast.started```  When a lives tream begins broadcasting, the broadcasting parameter changes from false to true, and this webhook fires. * ```live-stream.broadcast.ended```  This event fires when the live stream has finished broadcasting, and the broadcasting parameter flips from false to true. * ```video.source.recorded```  Occurs when a live stream is recorded and submitted for encoding.
-                url: "https://example.com/webhooks", // The url to which HTTP notifications are sent. It could be any http or https URL.
+                events: ["video.encoding.quality.completed"],
+                url: "https://example.com/webhooks",
               }; 
-
               const webhook = await client.webhooks.create(webhooksCreationPayload); 
           - language: python
-            code: |
+            code: |-
               # First install the api client with "pip install api.video"
               # Documentation: https://github.com/apivideo/api.video-python-client/blob/main/docs/WebhooksApi.md#create
 
               import apivideo
               from apivideo.api import webhooks_api
-              from apivideo.model.bad_request import BadRequest
-              from apivideo.model.webhook import Webhook
               from apivideo.model.webhooks_creation_payload import WebhooksCreationPayload
               from pprint import pprint
 
               # Enter a context with an instance of the API client
-              with apivideo.AuthenticatedApiClient(__API_KEY__) as api_client:
+              with apivideo.AuthenticatedApiClient("YOUR_API_KEY") as api_client:
                   # Create an instance of the API class
-                  api_instance = webhooks_api.WebhooksApi(api_client)
+                  webhooks_api = webhooks_api.WebhooksApi(api_client)
+
                   webhooks_creation_payload = WebhooksCreationPayload(
                       events=["video.encoding.quality.completed"],
                       url="https://example.com/webhooks",
-                  ) # WebhooksCreationPayload | 
+                  )
 
-                  # example passing only required values which don't have defaults set
                   try:
-                      # Create Webhook
-                      api_response = api_instance.create(webhooks_creation_payload)
+                      api_response = webhooks_api.create(webhooks_creation_payload)
                       pprint(api_response)
                   except apivideo.ApiException as e:
-                      print("Exception when calling WebhooksApi->create: %s\
-              " % e)
+                      print("Exception when calling WebhooksApi->create: %s" % e) 
           - language: java
-            code: |
+            code: |+
               // First add the "video.api:java-api-client" maven dependency to your project
               // Documentation: https://github.com/apivideo/api.video-java-client/blob/main/docs/WebhooksApi.md#create
 
-              import video.api.client.ApiVideoClient;
-              import video.api.client.api.ApiException;
-              import video.api.client.api.models.*;
-              import video.api.client.api.clients.WebhooksApi;
-              import java.util.*;
-
-              public class Example {
-                public static void main(String[] args) {
-                  ApiVideoClient client = new ApiVideoClient("YOUR_API_KEY");
-                  // if you rather like to use the sandbox environment:
-                  // ApiVideoClient client = new ApiVideoClient("YOUR_SANDBOX_API_KEY", ApiVideoClient.Environment.SANDBOX);
-
-                  WebhooksApi apiInstance = client.webhooks();
+              ApiVideoClient client = new ApiVideoClient("YOUR_API_KEY");
                   
-                  WebhooksCreationPayload webhooksCreationPayload = new WebhooksCreationPayload(); // 
-                  webhooksCreationPayload.setEvents(Arrays.asList("video.encoding.quality.completed")); 
-                  webhooksCreationPayload.setUrl("https://example.com/webhooks"); // The the url to which HTTP notifications are sent. It could be any http or https URL.
+              WebhooksCreationPayload webhooksCreationPayload = new WebhooksCreationPayload(); 
+              webhooksCreationPayload.setEvents(Arrays.asList("video.encoding.quality.completed")); 
+              webhooksCreationPayload.setUrl("https://example.com/webhooks"); 
 
 
-                  try {
-                    Webhook result = apiInstance.create(webhooksCreationPayload);
-                    System.out.println(result);
-                  } catch (ApiException e) {
-                    System.err.println("Exception when calling WebhooksApi#create");
-                    System.err.println("Status code: " + e.getCode());
-                    System.err.println("Reason: " + e.getMessage());
-                    System.err.println("Response headers: " + e.getResponseHeaders());
-                    e.printStackTrace();
-                  }
-                }
+              try {
+                Webhook result = client.webhooks().create(webhooksCreationPayload);
+              } catch (ApiException e) {
+                // Manage errors there
               }
+
           - language: csharp
-            code: |
+            code: |-
               // First add the "ApiVideo" NuGet package to your project
               // Documentation: https://github.com/apivideo/api.video-csharp-client/blob/main/docs/WebhooksApi.md#create
 
-              using System.Diagnostics;
-              using ApiVideo.Client;
+              var apiVideoClient = new ApiVideoClient("YOUR_API_KEY");
 
-              namespace Example
+              var webhooksCreationPayload = new WebhooksCreationPayload()
               {
-                  public class createExample
-                  {
-                      public static void Main()
-                      {
-                          var basePath = ApiVideoClient.Client.Environment.SANDBOX;
-                          var apiKey = "YOUR_API_KEY";
-
-                          var apiInstance = new ApiVideoClient(apiKey,basePath);
-
-                          var webhooksCreationPayload = new WebhooksCreationPayload(); // WebhooksCreationPayload | 
-                          var apiWebhooksInstance = apiInstance.Webhooks();
-                          try
-                          {
-                              // Create Webhook
-                              Webhook result = apiWebhooksInstance.create(webhooksCreationPayload);
-                              Debug.WriteLine(result);
-                          }
-                          catch (ApiException  e)
-                          {
-                              Debug.Print("Exception when calling WebhooksApi.create: " + e.Message );
-                              Debug.Print("Status Code: "+ e.ErrorCode);
-                              Debug.Print(e.StackTrace);
-                          }
-                      }
-                  }
+                  events = new List<String> { "video.encoding.quality.completed" },
+                  url = "https://example.com/webhooks"
+              };
+              try
+              {
+                  Webhook result = apiVideoClient.Webhooks().create(webhooksCreationPayload);
+              }
+              catch (ApiException e)
+              {
+                  // Manage error here
               }
           - language: php
             code: |-
@@ -10636,15 +10583,22 @@ paths:
               require __DIR__ . '/vendor/autoload.php';
 
               $webhooksCreationPayload = (new \ApiVideo\Client\Model\WebhooksCreationPayload())
-                  ->setEvents(['video.encoding.quality.completed']) // A list of the webhooks that you are subscribing to. There are Currently four webhook options: * ```video.encoding.quality.completed```  Occurs when a new video is uploaded into your account, it will be encoded into several different HLS and mp4 qualities. When each version is encoded, your webhook will get a notification.  It will look like ```{ "type": "video.encoding.quality.completed", "emittedAt": "2021-01-29T16:46:25.217+01:00", "videoId": "viXXXXXXXX", "encoding": "hls", "quality": "720p"} ```. This request says that the 720p HLS encoding was completed. * ```live-stream.broadcast.started```  When a lives tream begins broadcasting, the broadcasting parameter changes from false to true, and this webhook fires. * ```live-stream.broadcast.ended```  This event fires when the live stream has finished broadcasting, and the broadcasting parameter flips from false to true. * ```video.source.recorded```  Occurs when a live stream is recorded and submitted for encoding.)
-                  ->setUrl("https://example.com/webhooks"); // The url to which HTTP notifications are sent. It could be any http or https URL.)
+                  ->setEvents(['video.encoding.quality.completed']) 
+                  ->setUrl("https://example.com/webhooks"); 
 
               $webhook = $client->webhooks()->create($webhooksCreationPayload); 
           - language: swift
-            code: |+
+            code: |-
               // First install the api client: https://github.com/apivideo/api.video-ios-client#getting-started
               // Documentation: https://github.com/apivideo/api.video-ios-client/blob/main/docs/WebhooksAPI.md#create
 
+              ApiVideoClient.apiKey = "YOUR_API_KEY"
+
+              let webhooksCreationPayload = webhooks-creation-payload(events: ["events_example"], url: "url_example")
+
+              WebhooksAPI.create(webhooksCreationPayload: webhooksCreationPayload) { (response, error) in
+               
+              }
   /webhooks/{webhookId}:
     get:
       tags:
