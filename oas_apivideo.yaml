@@ -747,7 +747,7 @@ paths:
           - language: csharp
             code: |
               // First add the "ApiVideo" NuGet package to your project
-              // Documentation: https://github.com/apivideo/api.video-csharp-client/blob/main/docs/VideosApi.md#create
+              // Documentation: https://github.com/apivideo/api.video-csharp-client/blob/main/docs/PlayerThemesApi.md#create
 
               using System.Diagnostics;
               using ApiVideo.Client;
@@ -763,17 +763,17 @@ paths:
 
                           var apiInstance = new ApiVideoClient(apiKey,basePath);
 
-                          var videoCreationPayload = new VideoCreationPayload(); // VideoCreationPayload | video to create
-                          var apiVideosInstance = apiInstance.Videos();
+                          var playerThemeCreationPayload = new PlayerThemeCreationPayload(); // PlayerThemeCreationPayload | 
+                          var apiPlayerThemesInstance = apiInstance.PlayerThemes();
                           try
                           {
-                              // Create a video
-                              Video result = apiVideosInstance.create(videoCreationPayload);
+                              // Create a player
+                              PlayerTheme result = apiPlayerThemesInstance.create(playerThemeCreationPayload);
                               Debug.WriteLine(result);
                           }
                           catch (ApiException  e)
                           {
-                              Debug.Print("Exception when calling VideosApi.create: " + e.Message );
+                              Debug.Print("Exception when calling PlayerThemesApi.create: " + e.Message );
                               Debug.Print("Status Code: "+ e.ErrorCode);
                               Debug.Print(e.StackTrace);
                           }
@@ -2204,7 +2204,7 @@ paths:
           - language: go
             code: |
               // First install the go client with "go get github.com/apivideo/api.video-go-client"
-              // Documentation: https://github.com/apivideo/api.video-go-client/blob/main/docs/VideosApi.md#get
+              // Documentation: https://github.com/apivideo/api.video-go-client/blob/main/docs/VideosApi.md#create
 
               package main
 
@@ -2220,17 +2220,17 @@ paths:
                   // if you rather like to use the sandbox environment:
                   // client := apivideosdk.SandboxClientBuilder("YOUR_SANDBOX_API_KEY").Build()
                       
-                  videoId := "videoId_example" // string | The unique identifier for the video you want details about.
+                  videoCreationPayload := *apivideosdk.NewVideoCreationPayload("Maths video") // VideoCreationPayload | video to create
 
                   
-                  res, err := client.Videos.Get(videoId)
+                  res, err := client.Videos.Create(videoCreationPayload)
 
                   if err != nil {
-                      fmt.Fprintf(os.Stderr, "Error when calling `Videos.Get``: %v\
+                      fmt.Fprintf(os.Stderr, "Error when calling `Videos.Create``: %v\
               ", err)
                   }
-                  // response from `Get`: Video
-                  fmt.Fprintf(os.Stdout, "Response from `Videos.Get`: %v\
+                  // response from `Create`: Video
+                  fmt.Fprintf(os.Stdout, "Response from `Videos.Create`: %v\
               ", res)
               }
           - language: node
@@ -7966,62 +7966,58 @@ paths:
       x-readme:
         code-samples:
           - language: go
-            code: |
-              // First install the go client with "go get github.com/apivideo/api.video-go-client"
-              // Documentation: https://github.com/apivideo/api.video-go-client/blob/main/docs/PlayerThemesApi.md#create
+            code: |2-
+                client := apivideosdk.ClientBuilder("YOUR_API_KEY").Build()
 
-              package main
+                theme := apivideosdk.PlayerThemeCreationPayload{}
+                
+                theme.SetText("rgba(255, 0, 0, 1)")
+                theme.SetLink("rgba(0, 0, 255, 1)")
+                theme.SetLinkHover("rgba(0, 255, 255, 1)")
+                theme.SetTrackPlayed("rgba(255, 0, 255, 1)")
+                theme.SetTrackUnplayed("rgba(255, 255, 255, 1)")
+                theme.SetTrackBackground("rgba(255, 255, 255, 1)")
+                theme.SetBackgroundTop("rgba(0, 255, 255, 1)")
+                theme.SetBackgroundBottom("rgba(255, 255, 255, 1)")
+                theme.SetBackgroundText("rgba(255, 255, 255, 1)")
+                theme.SetEnableApi(true)
+                theme.SetEnableControls(true)
+                theme.SetForceAutoplay(true)
+                theme.SetHideTitle(true)
+                theme.SetForceLoop(true )
 
-              import (
-                  "context"
-                  "fmt"
-                  "os"
-                  apivideosdk "github.com/apivideo/api.video-go-client"
-              )
+                res, err := client.PlayerThemes.Create(theme)
 
-              func main() {
-                  client := apivideosdk.ClientBuilder("YOUR_API_KEY").Build()
-                  // if you rather like to use the sandbox environment:
-                  // client := apivideosdk.SandboxClientBuilder("YOUR_SANDBOX_API_KEY").Build()
-                      
-                  playerThemeCreationPayload := *apivideosdk.NewPlayerThemeCreationPayload() // PlayerThemeCreationPayload | 
+                if err != nil {
+                    fmt.Fprintf(os.Stderr, "Error when calling `PlayerThemes.Create``: %v", err)
+                }
 
-                  
-                  res, err := client.PlayerThemes.Create(playerThemeCreationPayload)
-
-                  if err != nil {
-                      fmt.Fprintf(os.Stderr, "Error when calling `PlayerThemes.Create``: %v\
-              ", err)
-                  }
-                  // response from `Create`: PlayerTheme
-                  fmt.Fprintf(os.Stdout, "Response from `PlayerThemes.Create`: %v\
-              ", res)
-              }
+                fmt.Fprintf(os.Stdout, "Response from `PlayerThemes.Create`: %v", res) 
           - language: node
-            code: |-
+            code: |
               // First install the "@api.video/nodejs-client" npm package
               // Documentation: https://github.com/apivideo/api.video-nodejs-client/blob/main/doc/api/PlayerThemesApi.md#create
 
+              const ApiVideoClient = require('@api.video/nodejs-client');
+
               const client = new ApiVideoClient({ apiKey: "YOUR_API_KEY" });
 
-              const playerThemeCreationPayload = {
-                text: "rgba(255, 255, 255, 1)", // RGBA color for timer text. Default: rgba(255, 255, 255, 1)
-                link: "rgba(255, 255, 255, 1)", // RGBA color for all controls. Default: rgba(255, 255, 255, 1)
-                linkHover: "rgba(255, 255, 255, 1)", // RGBA color for all controls when hovered. Default: rgba(255, 255, 255, 1)
-                trackPlayed: "rgba(255, 255, 255, 1)", // RGBA color playback bar: played content. Default: rgba(88, 131, 255, .95)
-                trackUnplayed: "rgba(255, 255, 255, 1)", // RGBA color playback bar: downloaded but unplayed (buffered) content. Default: rgba(255, 255, 255, .35)
-                trackBackground: "rgba(255, 255, 255, 1)", // RGBA color playback bar: background. Default: rgba(255, 255, 255, .2)
-                backgroundTop: "rgba(255, 255, 255, 1)", // RGBA color: top 50% of background. Default: rgba(0, 0, 0, .7)
-                backgroundBottom: "rgba(255, 255, 255, 1)", // RGBA color: bottom 50% of background. Default: rgba(0, 0, 0, .7)
-                backgroundText: "rgba(255, 255, 255, 1)", // RGBA color for title text. Default: rgba(255, 255, 255, 1)
-                enableApi: true, // enable/disable player SDK access. Default: true
-                enableControls: true, // enable/disable player controls. Default: true
-                forceAutoplay: true, // enable/disable player autoplay. Default: false
-                hideTitle: true, // enable/disable title. Default: false
-                forceLoop: true, // enable/disable looping. Default: false
-              }; 
-               
-              const playerTheme = await client.playerThemes.create(playerThemeCreationPayload); 
+              await client.playerThemes.create({ 
+                  text: "rgba(255, 0, 0, 1)", // RGBA color for timer text. Default: rgba(255, 255, 255, 1)
+                  link: "rgba(0, 0, 255, 1)", // RGBA color for all controls. Default: rgba(255, 255, 255, 1)
+                  linkHover: "rgba(0, 255, 255, 1)", // RGBA color for all controls when hovered. Default: rgba(255, 255, 255, 1)
+                  trackPlayed: "rgba(255, 0, 255, 1)", // RGBA color playback bar: played content. Default: rgba(88, 131, 255, .95)
+                  trackUnplayed: "rgba(255, 255, 255, 1)", // RGBA color playback bar: downloaded but unplayed (buffered) content. Default: rgba(255, 255, 255, .35)
+                  trackBackground: "rgba(255, 255, 255, 1)", // RGBA color playback bar: background. Default: rgba(255, 255, 255, .2)
+                  backgroundTop: "rgba(0, 255, 255, 1)", // RGBA color: top 50% of background. Default: rgba(0, 0, 0, .7)
+                  backgroundBottom: "rgba(255, 255, 255, 1)", // RGBA color: bottom 50% of background. Default: rgba(0, 0, 0, .7)
+                  backgroundText: "rgba(255, 255, 255, 1)", // RGBA color for title text. Default: rgba(255, 255, 255, 1)
+                  enableApi: true, // enable/disable player SDK access. Default: true
+                  enableControls: true, // enable/disable player controls. Default: true
+                  forceAutoplay: true, // enable/disable player autoplay. Default: false
+                  hideTitle: true, // enable/disable title. Default: false
+                  forceLoop: true // enable/disable looping. Default: false
+              }); 
           - language: python
             code: |
               # First install the api client with "pip install api.video"
@@ -8034,117 +8030,92 @@ paths:
               from pprint import pprint
 
               # Enter a context with an instance of the API client
-              with apivideo.AuthenticatedApiClient(__API_KEY__) as api_client:
+              with apivideo.AuthenticatedApiClient("YOUR_API_KEY") as api_client:
                   # Create an instance of the API class
-                  api_instance = player_themes_api.PlayerThemesApi(api_client)
+                  themes_api = player_themes_api.PlayerThemesApi(api_client)
+                
                   player_theme_creation_payload = PlayerThemeCreationPayload(
-                      text="text_example",
-                      link="link_example",
-                      link_hover="link_hover_example",
-                      track_played="track_played_example",
-                      track_unplayed="track_unplayed_example",
-                      track_background="track_background_example",
-                      background_top="background_top_example",
-                      background_bottom="background_bottom_example",
-                      background_text="background_text_example",
-                      enable_api=True,
-                      enable_controls=True,
-                      force_autoplay=False,
-                      hide_title=False,
-                      force_loop=False,
-                  ) # PlayerThemeCreationPayload | 
+                      text="rgba(255, 0, 0, 1)", # RGBA color for timer text. Default: rgba(255, 255, 255, 1)
+                      link="rgba(0, 0, 255, 1)", # RGBA color for all controls. Default: rgba(255, 255, 255, 1)
+                      link_hover="rgba(0, 255, 255, 1)", # RGBA color for all controls when hovered. Default: rgba(255, 255, 255, 1)
+                      track_played="rgba(255, 0, 255, 1)", # RGBA color playback bar: played content. Default: rgba(88, 131, 255, .95)
+                      track_unplayed="rgba(255, 255, 255, 1)", # RGBA color playback bar: downloaded but unplayed (buffered) content. Default: rgba(255, 255, 255, .35)
+                      track_background="rgba(255, 255, 255, 1)", # RGBA color playback bar: background. Default: rgba(255, 255, 255, .2)
+                      background_top="rgba(0, 255, 255, 1)", # RGBA color: top 50% of background. Default: rgba(0, 0, 0, .7)
+                      background_bottom="rgba(255, 255, 255, 1)", # RGBA color: bottom 50% of background. Default: rgba(0, 0, 0, .7)
+                      background_text="rgba(255, 255, 255, 1)", # RGBA color for title text. Default: rgba(255, 255, 255, 1)
+                      enable_api=True, # enable/disable player SDK access. Default: true
+                      enable_controls=True, # enable/disable player controls. Default: true
+                      force_autoplay=True, # enable/disable player autoplay. Default: false
+                      hide_title=True, # enable/disable title. Default: false
+                      force_loop=True # enable/disable looping. Default: false
+                  ) 
 
-                  # example passing only required values which don't have defaults set
                   try:
-                      # Create a player
-                      api_response = api_instance.create(player_theme_creation_payload)
+                      api_response = themes_api.create(player_theme_creation_payload)
                       pprint(api_response)
                   except apivideo.ApiException as e:
-                      print("Exception when calling PlayerThemesApi->create: %s\
-              " % e)
+                      print("Exception when calling PlayerThemesApi->create: %s" % e)
           - language: java
-            code: |
+            code: |-
               // First add the "video.api:java-api-client" maven dependency to your project
               // Documentation: https://github.com/apivideo/api.video-java-client/blob/main/docs/PlayerThemesApi.md#create
 
-              import video.api.client.ApiVideoClient;
-              import video.api.client.api.ApiException;
-              import video.api.client.api.models.*;
-              import video.api.client.api.clients.PlayerThemesApi;
-              import java.util.*;
+              ApiVideoClient client = new ApiVideoClient("YOUR_API_KEY");
 
-              public class Example {
-                public static void main(String[] args) {
-                  ApiVideoClient client = new ApiVideoClient("YOUR_API_KEY");
-                  // if you rather like to use the sandbox environment:
-                  // ApiVideoClient client = new ApiVideoClient("YOUR_SANDBOX_API_KEY", ApiVideoClient.Environment.SANDBOX);
+              PlayerThemeCreationPayload theme = new PlayerThemeCreationPayload(); 
+              theme.setText("rgba(255, 0, 0, 1)"); // RGBA color for timer text. Default: rgba(255, 255, 255, 1)
+              theme.setLink("rgba(0, 0, 255, 1)"); // RGBA color for all controls. Default: rgba(255, 255, 255, 1)
+              theme.setLinkHover("rgba(0, 255, 255, 1)"); // RGBA color for all controls when hovered. Default: rgba(255, 255, 255, 1)
+              theme.setTrackPlayed("rgba(255, 0, 255, 1)"); // RGBA color playback bar: played content. Default: rgba(88, 131, 255, .95)
+              theme.setTrackUnplayed("rgba(255, 255, 255, 1)"); // RGBA color playback bar: downloaded but unplayed (buffered) content. Default: rgba(255, 255, 255, .35)
+              theme.setTrackBackground("rgba(255, 255, 255, 1)"); // RGBA color playback bar: background. Default: rgba(255, 255, 255, .2)
+              theme.setBackgroundTop("rgba(0, 255, 255, 1)"); // RGBA color: top 50% of background. Default: rgba(0, 0, 0, .7)
+              theme.setBackgroundBottom("rgba(255, 255, 255, 1)"); // RGBA color: bottom 50% of background. Default: rgba(0, 0, 0, .7)
+              theme.setBackgroundText("rgba(255, 255, 255, 1)"); // RGBA color for title text. Default: rgba(255, 255, 255, 1)
+              theme.setEnableApi(true); // enable/disable player SDK access. Default: true
+              theme.setEnableControls(true); // enable/disable player controls. Default: true
+              theme.setForceAutoplay(true); // enable/disable player autoplay. Default: false
+              theme.setHideTitle(true); // enable/disable title. Default: false
+              theme.setForceLoop(true); // enable/disable looping. Default: false
 
-                  PlayerThemesApi apiInstance = client.playerThemes();
-                  
-                  PlayerThemeCreationPayload playerThemeCreationPayload = new PlayerThemeCreationPayload(); // 
-                  playerThemeCreationPayload.setText(""null""); // RGBA color for timer text. Default: rgba(255, 255, 255, 1)
-                  playerThemeCreationPayload.setLink(""null""); // RGBA color for all controls. Default: rgba(255, 255, 255, 1)
-                  playerThemeCreationPayload.setLinkHover(""null""); // RGBA color for all controls when hovered. Default: rgba(255, 255, 255, 1)
-                  playerThemeCreationPayload.setTrackPlayed(""null""); // RGBA color playback bar: played content. Default: rgba(88, 131, 255, .95)
-                  playerThemeCreationPayload.setTrackUnplayed(""null""); // RGBA color playback bar: downloaded but unplayed (buffered) content. Default: rgba(255, 255, 255, .35)
-                  playerThemeCreationPayload.setTrackBackground(""null""); // RGBA color playback bar: background. Default: rgba(255, 255, 255, .2)
-                  playerThemeCreationPayload.setBackgroundTop(""null""); // RGBA color: top 50% of background. Default: rgba(0, 0, 0, .7)
-                  playerThemeCreationPayload.setBackgroundBottom(""null""); // RGBA color: bottom 50% of background. Default: rgba(0, 0, 0, .7)
-                  playerThemeCreationPayload.setBackgroundText(""null""); // RGBA color for title text. Default: rgba(255, 255, 255, 1)
-                  playerThemeCreationPayload.setEnableApi(); // enable/disable player SDK access. Default: true
-                  playerThemeCreationPayload.setEnableControls(); // enable/disable player controls. Default: true
-                  playerThemeCreationPayload.setForceAutoplay(); // enable/disable player autoplay. Default: false
-                  playerThemeCreationPayload.setHideTitle(); // enable/disable title. Default: false
-                  playerThemeCreationPayload.setForceLoop(); // enable/disable looping. Default: false
-
-
-                  try {
-                    PlayerTheme result = apiInstance.create(playerThemeCreationPayload);
-                    System.out.println(result);
-                  } catch (ApiException e) {
-                    System.err.println("Exception when calling PlayerThemesApi#create");
-                    System.err.println("Status code: " + e.getCode());
-                    System.err.println("Reason: " + e.getMessage());
-                    System.err.println("Response headers: " + e.getResponseHeaders());
-                    e.printStackTrace();
-                  }
-                }
-              }
+              try {
+                PlayerTheme result = client.playerThemes().create(theme);
+              } catch (ApiException e) {
+                // Manage errors there
+              } 
           - language: csharp
-            code: |
+            code: |-
               // First add the "ApiVideo" NuGet package to your project
               // Documentation: https://github.com/apivideo/api.video-csharp-client/blob/main/docs/PlayerThemesApi.md#create
 
-              using System.Diagnostics;
-              using ApiVideo.Client;
+              var apiVideoClient = new ApiVideoClient("YOUR_API_KEY");
 
-              namespace Example
+              var theme = new PlayerThemeCreationPayload()
               {
-                  public class createExample
-                  {
-                      public static void Main()
-                      {
-                          var basePath = ApiVideoClient.Client.Environment.SANDBOX;
-                          var apiKey = "YOUR_API_KEY";
+                  text = "rgba(255, 0, 0, 1)", // RGBA color for timer text. Default: rgba(255, 255, 255, 1)
+                  link = "rgba(0, 0, 255, 1)", // RGBA color for all controls. Default: rgba(255, 255, 255, 1)
+                  linkhover = "rgba(0, 255, 255, 1)", // RGBA color for all controls when hovered. Default: rgba(255, 255, 255, 1)
+                  trackplayed = "rgba(255, 0, 255, 1)", // RGBA color playback bar: played content. Default: rgba(88, 131, 255, .95)
+                  trackunplayed = "rgba(255, 255, 255, 1)", // RGBA color playback bar: downloaded but unplayed (buffered) content. Default: rgba(255, 255, 255, .35)
+                  trackbackground = "rgba(255, 255, 255, 1)", // RGBA color playback bar: background. Default: rgba(255, 255, 255, .2)
+                  backgroundtop = "rgba(0, 255, 255, 1)", // RGBA color: top 50% of background. Default: rgba(0, 0, 0, .7)
+                  backgroundbottom = "rgba(255, 255, 255, 1)", // RGBA color: bottom 50% of background. Default: rgba(0, 0, 0, .7)
+                  backgroundtext = "rgba(255, 255, 255, 1)", // RGBA color for title text. Default: rgba(255, 255, 255, 1)
+                  enableapi = true, // enable/disable player SDK access. Default: true
+                  enablecontrols = true, // enable/disable player controls. Default: true
+                  forceautoplay = true, // enable/disable player autoplay. Default: false
+                  hidetitle = true, // enable/disable title. Default: false
+                  forceloop = true // enable/disable looping. Default: false
+              };
 
-                          var apiInstance = new ApiVideoClient(apiKey,basePath);
-
-                          var playerThemeCreationPayload = new PlayerThemeCreationPayload(); // PlayerThemeCreationPayload | 
-                          var apiPlayerThemesInstance = apiInstance.PlayerThemes();
-                          try
-                          {
-                              // Create a player
-                              PlayerTheme result = apiPlayerThemesInstance.create(playerThemeCreationPayload);
-                              Debug.WriteLine(result);
-                          }
-                          catch (ApiException  e)
-                          {
-                              Debug.Print("Exception when calling PlayerThemesApi.create: " + e.Message );
-                              Debug.Print("Status Code: "+ e.ErrorCode);
-                              Debug.Print(e.StackTrace);
-                          }
-                      }
-                  }
+              try
+              {
+                  PlayerTheme result = apiVideoClient.PlayerThemes().create(theme);
+              }
+              catch (ApiException e)
+              {
+                  // Manage error here
               }
           - language: php
             code: |-
@@ -8154,7 +8125,7 @@ paths:
 
               require __DIR__ . '/vendor/autoload.php';
 
-              $playerThemeCreationPayload = (new \ApiVideo\Client\Model\PlayerThemeCreationPayload())
+              $theme = (new \ApiVideo\Client\Model\PlayerThemeCreationPayload())
                   ->setText("rgba(255, 255, 255, 1)") // RGBA color for timer text. Default: rgba(255, 255, 255, 1))
                   ->setLink("rgba(255, 255, 255, 1)") // RGBA color for all controls. Default: rgba(255, 255, 255, 1))
                   ->setLinkHover("rgba(255, 255, 255, 1)") // RGBA color for all controls when hovered. Default: rgba(255, 255, 255, 1))
@@ -8170,12 +8141,35 @@ paths:
                   ->setHideTitle(true) // enable/disable title. Default: false)
                   ->setForceLoop(true); // enable/disable looping. Default: false)
 
-              $playerTheme = $client->playerThemes()->create($playerThemeCreationPayload); 
+              $playerTheme = $client->playerThemes()->create($theme); 
           - language: swift
-            code: |+
+            code: |-
               // First install the api client: https://github.com/apivideo/api.video-ios-client#getting-started
               // Documentation: https://github.com/apivideo/api.video-ios-client/blob/main/docs/PlayerThemesAPI.md#create
 
+              ApiVideoClient.apiKey = "YOUR_API_KEY"
+
+              let videoCreationPayload = PlayerThemeCreationPayload(
+                text = "rgba(255, 0, 0, 1)", // RGBA color for timer text. Default: rgba(255, 255, 255, 1)
+                link = "rgba(0, 0, 255, 1)", // RGBA color for all controls. Default: rgba(255, 255, 255, 1)
+                linkHover = "rgba(0, 255, 255, 1)", // RGBA color for all controls when hovered. Default: rgba(255, 255, 255, 1)
+                trackPlayed = "rgba(255, 0, 255, 1)", // RGBA color playback bar: played content. Default: rgba(88, 131, 255, .95)
+                trackUnplayed = "rgba(255, 255, 255, 1)", // RGBA color playback bar: downloaded but unplayed (buffered) content. Default: rgba(255, 255, 255, .35)
+                trackBackground = "rgba(255, 255, 255, 1)", // RGBA color playback bar: background. Default: rgba(255, 255, 255, .2)
+                backgroundTop = "rgba(0, 255, 255, 1)", // RGBA color: top 50% of background. Default: rgba(0, 0, 0, .7)
+                backgroundBottom = "rgba(255, 255, 255, 1)", // RGBA color: bottom 50% of background. Default: rgba(0, 0, 0, .7)
+                backgroundText = "rgba(255, 255, 255, 1)", // RGBA color for title text. Default: rgba(255, 255, 255, 1)
+                enableApi = true, // enable/disable player SDK access. Default: true
+                enableControls = true, // enable/disable player controls. Default: true
+                forceAutoplay = true, // enable/disable player autoplay. Default: false
+                hideTitle = true, // enable/disable title. Default: false
+                forceLoop = true // enable/disable looping. Default: false
+              )
+
+
+              PlayerThemesAPI.create(playerThemeCreationPayload: playerThemeCreationPayload) { (response, error) in
+                  
+              } 
   /players/{playerId}:
     get:
       tags:
