@@ -218,7 +218,7 @@ paths:
           example: li400mYKSgQ6xs7taUeSaEKr
         - name: sortBy
           in: query
-          description: 'Allowed: publishedAt, title. You can search by the time videos were published at, or by title.'
+          description: 'Allowed: title, createdAt, publishedAt, updatedAt. You can sort videos by the their created time, published time, updated time, or by title.'
           required: false
           style: form
           explode: true
