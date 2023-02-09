@@ -800,9 +800,9 @@ paths:
           * allow to send a video source "progressively", i.e., before before knowing the total size of the video.
           Once all chunks have been sent, they are reaggregated to one source file. The video source is considered as "completely sent" when the "last" chunk is sent (i.e., the chunk that "completes" the upload).
         ```bash
-        curl https://ws.api.video/videos/{videoId}/source \
-          -H 'Authorization: Bearer {access_token}' \
-          -F file=@/path/to/video.mp4
+        curl --user your_api_key: \
+         --url https://ws.api.video/videos/{videoId}/source \
+         --form file=@/path/to/video.mp4
 
           ```
         Tutorials using [video upload](https://api.video/blog/endpoints/video-upload).
