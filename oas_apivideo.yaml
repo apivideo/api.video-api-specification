@@ -466,9 +466,9 @@ paths:
     post:
       tags:
         - Videos
-      summary: Create a video
+      summary: Create a video object
       description: |
-        Creates a video object. More information on video objects can be found [here](https://docs.api.video/reference/videos-1)
+        Creates a video object. More information on video objects can be found [here](https://docs.api.video/reference/videos-1).
       operationId: POST-video
       requestBody:
         description: video to create
@@ -2299,8 +2299,8 @@ paths:
     delete:
       tags:
         - Videos
-      summary: Delete a video
-      description: Delete a video by video id.
+      summary: Delete a video object
+      description: Delete a video object by video ID.
       x-client-description:
         default: 'If you do not need a video any longer, you can send a request to delete it. All you need is the videoId.'
       operationId: DELETE-video
@@ -2476,18 +2476,18 @@ paths:
     patch:
       tags:
         - Videos
-      summary: Update a video
-      description: Update the parameters associated with a video id.
+      summary: Update a video object
+      description: Update the parameters associated with a video ID.
       x-client-description:
         default: |
-          Updates the parameters associated with your video. The video you are updating is determined by the video ID you provide. 
+          Updates the parameters associated with a video ID. The video object you are updating is determined by the video ID you provide. 
 
           NOTE: If you are updating an array, you must provide the entire array as what you provide here overwrites what is in the system rather than appending to it.
       operationId: PATCH-video
       parameters:
         - name: videoId
           in: path
-          description: The video ID for the video you want to delete.
+          description: The video ID for the video you want to update.
           required: true
           style: simple
           explode: false
@@ -2790,8 +2790,8 @@ paths:
     get:
       tags:
         - Videos
-      summary: Retrieve a video status
-      description: 'Upload status & encoding status to determine when the video is uploaded or ready to playback. Once encoding is completed, the response also lists the available stream qualities.'
+      summary: Retrieve video status and details
+      description: 'Retrieve upload status and encoding status to determine when the video is uploaded or ready to playback. Once encoding is completed, the response also lists the available stream qualities.'
       x-client-description:
         default: 'This method provides upload status & encoding status to determine when the video is uploaded or ready to playback. Once encoding is completed, the response also lists the available stream qualities.'
       operationId: GET-video-status
