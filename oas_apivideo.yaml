@@ -9171,7 +9171,7 @@ paths:
     get:
       tags:
       - Analytics
-      summary: Get number of plays for video
+      summary: Get play events for video
       description: Retrieve filtered analytics about the number of plays for your
         videos in a project.
       operationId: GET_analytics-videos-plays
@@ -9179,10 +9179,9 @@ paths:
       - name: period
         in: query
         description: "Use this query parameter to filter results for a time period,
-          **within a maximum of 30 days**. The value you provide must follow one of
+          **within the last 30 days**. The value you provide must follow one of
           the following formats: \n- For a day : 2018-01-01,\n- For a week: 2018-W01,\n-
-          For a month: 2018-01,\n- For a year: 2018\n\nYou need to specify a time
-          range using this format:\n- `2018-01-01/2018-02-01`\n\nNote that filtering
+          For a month: 2018-01,\n- For a time interval: 2023-04-01/2023-04-05\n\nNote that filtering
           for a specific time only, like `HH:MM:SS` is not supported."
         required: true
         style: form
@@ -9190,7 +9189,7 @@ paths:
         schema:
           type: string
           format: period
-        example: 2018-01-01/2018-02-01
+        example: 2023-04-01/2023-04-05
       - name: dimension
         in: query
         description: |-
@@ -9801,7 +9800,7 @@ paths:
     get:
       tags:
       - Analytics
-      summary: Get number of plays for live stream
+      summary: Get play events for live stream
       description: Retrieve filtered analytics about the number of plays for your
         live streams in a project.
       operationId: GET_analytics-live-streams-plays
@@ -9809,10 +9808,9 @@ paths:
       - name: period
         in: query
         description: "Use this query parameter to filter results for a time period,
-          **within a maximum of 30 days**. The value you provide must follow one of
+          **within the last 30 days**. The value you provide must follow one of
           the following formats: \n- For a day : 2018-01-01,\n- For a week: 2018-W01,\n-
-          For a month: 2018-01,\n- For a year: 2018\n\nYou need to specify a time
-          range using this format:\n- `2018-01-01/2018-02-01`\n\nNote that filtering
+          For a month: 2018-01,\n- For a time interval: 2023-04-01/2023-04-05\n\nNote that filtering
           for a specific time only, like `HH:MM:SS` is not supported."
         required: true
         style: form
@@ -9820,7 +9818,7 @@ paths:
         schema:
           type: string
           format: period
-        example: 2018-01-01/2018-02-01
+        example: 2023-04-01/2023-04-05
       - name: dimension
         in: query
         description: |-
@@ -9959,7 +9957,7 @@ paths:
                     status: 404
       security:
       - apiKey: []
-      x-client-action: getVideosPlays
+      x-client-action: getLiveStreamsPlays
       x-group-parameters: true
       x-client-paginated: true
       x-readme:
