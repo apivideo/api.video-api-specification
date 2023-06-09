@@ -9380,6 +9380,7 @@ paths:
       - apiKey: []
       x-client-action: getVideosPlays
       x-group-parameters: true
+      x-client-paginated: true
       x-readme:
         code-samples:
         - language: go
@@ -10045,6 +10046,7 @@ paths:
       - apiKey: []
       x-client-action: getLiveStreamsPlays
       x-group-parameters: true
+      x-client-paginated: true
       x-readme:
         code-samples:
         - language: go
