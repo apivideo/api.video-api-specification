@@ -12778,7 +12778,7 @@ components:
         source:
           type: string
           description: |
-            You can either add a video that is already available on the web, or clone one of your videos that you already uploaded to your api.video account.
+            You can either add a video that is accessible through a URL, or clone one of your videos that you already uploaded to your api.video account.
             
             To upload a video from the web, add the URL that points to the video container (for example, the `.mp4` file). 
             
