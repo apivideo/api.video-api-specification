@@ -481,7 +481,7 @@ paths:
               $ref: '#/components/schemas/video-creation-payload'
       responses:
         '201':
-          description: Created
+          description: Created video object from file upload
           content:
             application/json:
               schema:
@@ -515,7 +515,7 @@ paths:
                       thumbnail: 'https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/thumbnail.jpg'
                       mp4: 'https://cdn.api.video/vod/vi4blUQJFrYWbaG44NChkH27/mp4/source.mp4'
         '202':
-          description: Accepted
+          description: Accepted video object creation from source URL or source Video ID (for cloning)
           content:
             application/json:
               schema:
@@ -12757,7 +12757,12 @@ components:
           example: A video about string theory.
         source:
           type: string
-          description: 'You can either add a video already on the web, by entering the URL of the video, or you can also enter the `videoId` of one of the videos you already have on your api.video acccount, and this will generate a copy of your video. Creating a copy of a video can be especially useful if you want to keep your original video and trim or apply a watermark onto the copy you would create.'
+          description: |
+            You can either add a video that is accessible through a URL, or clone one of your videos that you already uploaded to your api.video account.
+            
+            To upload a video from the web, add the URL that points to the video container (for example, the `.mp4` file). 
+            
+            To clone one of your existing videos, enter the videoId of the video that you already have on your api.video account. Creating a clone of a video can be especially useful if you want to keep your original video and trim or apply a watermark onto the clone you create.
           example: 'https://www.myvideo.url.com/video.mp4 OR vi4k0jvEUuaTdRAEjQ4JfOyl'
         public:
           type: boolean
