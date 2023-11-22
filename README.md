@@ -3,6 +3,12 @@
 ![](https://github.com/apivideo/.github/blob/main/assets/apivideo_banner.png)
 <h1 align="center">api.video API OpenAPI specification</h1>
 
+<hr/>
+
+<h2 align="center"><b>Important Update</b>: The OpenAPI specification for api.video's API has moved! You can now find it in the <a href="https://github.com/apivideo/api.video-api-client-generator/blob/main/oas_apivideo.yaml">api.video API Client Generator repository</a>.</h2>
+
+<hr/>
+
 [api.video](https://api.video) is the video infrastructure for product builders. Lightning fast video APIs for integrating, scaling, and managing on-demand & low latency live streaming features in your app.
 
 
